@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import type { ReactElement, ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import type { NextPage } from 'next';
+import { AnimatePresence } from 'framer-motion';
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -18,5 +19,9 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   // 페이지 단위에서 정의한 레이아웃이 있다면 해당 레이아웃을 적용한다.
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  return getLayout(<Component {...pageProps} />);
+  return getLayout(
+    <AnimatePresence mode="wait">
+      <Component {...pageProps} />
+    </AnimatePresence>
+  );
 }
