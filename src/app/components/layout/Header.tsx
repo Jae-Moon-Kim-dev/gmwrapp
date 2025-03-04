@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 const Header = () => {
   return (
@@ -15,7 +16,9 @@ const Header = () => {
                         </a>
                     </li>
                     <li className="nav-item dropdown">
-                        <a className="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">교회소개</a>
+                        <Link href="/info/prayerhouse">
+                            <span className="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">교회소개</span>
+                        </Link>
                         <div className="dropdown-menu">
                             <a className="dropdown-item" href="#">교회소개</a>
                             <a className="dropdown-item" href="#">섬기는분</a>

@@ -16,7 +16,7 @@ const Prayerhouse = () => {
   const [board, setBoard] = useState<Board[]>([initialData]);
 
   const fetchBoards = async ():Promise<Board[]> => {
-    const response = await fetch('http://localhost:8000/api/board/all');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/board/all`);
     const { data } = await response.json();
     console.log(data);
     let no = 0;
