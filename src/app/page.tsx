@@ -1,3 +1,4 @@
+import React from 'react';
 import Head from 'next/head';
 import styles from './page.module.css';
 import type { ReactElement } from 'react';

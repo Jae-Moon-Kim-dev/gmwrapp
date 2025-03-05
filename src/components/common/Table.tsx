@@ -1,6 +1,6 @@
 import { TableProps } from '@/app/types/common/table';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 
 const Table = <T extends object>( { data, columns }: TableProps<T> ):ReactNode => {
     const tanstackTable = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel(), });

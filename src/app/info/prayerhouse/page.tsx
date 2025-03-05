@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Board, BoardApiData } from '@/app/types/prayerhouse/prayerHouse';
 import { ColumnDef } from '@tanstack/react-table';
 import Table from '@/components/common/Table';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Prayerhouse = () => {
 
