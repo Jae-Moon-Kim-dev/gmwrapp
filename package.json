@@ -9,20 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.21.2",
     "bootstrap": "^5.3.3",
-    "react": "^19.0.0",
-    "react-bootstrap": "^2.10.9",
-    "react-dom": "^19.0.0",
     "bootswatch": "^5.3.3",
     "framer-motion": "^12.0.0-alpha.1",
     "next": "^15.2.0",
     "node-sass": "^9.0.0",
+    "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
+    "react-dom": "^19.0.0",
     "sass": "^1.85.1",
-    "typescript": "^5",
-    "styled-components": "^6.1.15"
+    "styled-components": "^6.1.15",
+    "styled-normalize": "^8.1.1",
+    "typescript": "^5"
   },
   "devDependencies": {
-    "@eslint/eslintyarrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

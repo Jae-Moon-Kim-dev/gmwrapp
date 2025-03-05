@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Metadata } from "next";
+import StyledComponentsRegistry from '../lib/StyledComponentsRegistry';
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import 'bootswatch/dist/sandstone/bootstrap.min.css';
+import 'bootswatch/dist/flatly/bootstrap.min.css';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,9 +25,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+    <html lang="kr">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <StyledComponentsRegistry>
+          {children}
+        </StyledComponentsRegistry>
       </body>
     </html>
   );

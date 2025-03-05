@@ -1,9 +1,10 @@
 import React from 'react';
-import '../styles/globals.css';
 import type { ReactElement, ReactNode } from 'react';
 import type { AppProps } from 'next/app';
 import type { NextPage } from 'next';
+import {ThemeProvider} from 'styled-components';
 import { AnimatePresence } from 'framer-motion';
+import {theme} from '../styles/theme';
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -21,8 +22,10 @@ export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return getLayout(
-    <AnimatePresence mode="wait">
-      <Component {...pageProps} />
-    </AnimatePresence>
+    <ThemeProvider theme={theme}>
+      <AnimatePresence mode="wait">
+        <Component {...pageProps} />
+      </AnimatePresence>
+    </ThemeProvider>
   );
 }

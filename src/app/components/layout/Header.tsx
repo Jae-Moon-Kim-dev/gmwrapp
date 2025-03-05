@@ -1,11 +1,14 @@
 import React from 'react';
 import Link from "next/link";
+import Image from 'next/image';
 
 const Header = () => {
   return (
-      <nav className="navbar navbar-expand-lg bg-light" data-bs-theme="light">
+      <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
         <div className="container">
-            <a className="navbar-brand" href="#">Navbar</a>
+            <Link href="/" className='navbar-brand' >
+                <Image src="/images/logo-invert.png" alt="WR" width={110} height={50} />
+            </Link>
             <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
             </button>
@@ -63,6 +66,15 @@ const Header = () => {
                         </div>
                     </li>
                 </ul>
+            </div>
+            <div>
+                <Link href="/user">
+                    <button type="button" className="btn btn-link">로그인</button>
+                </Link>
+                |
+                <Link href="/">
+                    <button type="button" className="btn btn-link">회원가입</button>
+                </Link>
             </div>
         </div>
       </nav>

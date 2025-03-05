@@ -16,7 +16,7 @@ const Home: NextPageWithLayout = () => {
       <Layout>
         <div className="container">
           <h1 className={styles.title}>
-            안녕하세요 <a href="https://nextjs.org">Next.js!</a>
+            안녕하세요
           </h1>
           <p className={styles.description}>
             중첩 레이아웃 적용 완료!
