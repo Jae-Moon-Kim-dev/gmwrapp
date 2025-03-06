@@ -4,19 +4,8 @@ import { Board, BoardApiData } from '@/app/types/prayerhouse/prayerHouse';
 import { ColumnDef } from '@tanstack/react-table';
 import Table from '@/components/common/Table';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 
 const Prayerhouse = () => {
-
-  const Title = styled.div`
-    @font-face {
-      font-family: "NanumGothic";
-      src: url("/fonts/NanumGothicExtraBold.woff") format("woff");
-      font-display: swap;
-    };
-    font-family: "NanumGothic";
-    font-style: Italic
-  `;
 
   const initialData: Board = {
       boardNo: 0,
@@ -83,7 +72,6 @@ const Prayerhouse = () => {
       transition={{ duration: 0.5 }}
     >
       <div className="container" >
-        <Title>안녕하세요</Title>
         <ol className="breadcrumb mt-4">
           <li className="breadcrumb-item"><a href="#">Home</a></li>
           <li className="breadcrumb-item"><a href="#">교회소개</a></li>
