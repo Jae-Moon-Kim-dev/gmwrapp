@@ -78,6 +78,29 @@ export const GlobalStyle = createGlobalStyle`
     margin: 0;
     }
 
+    html, body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+      padding: 0;
+      margin: 0;
+      color: #545454;
+    }
+
+    body, input, select {
+        font-size: 12px;
+        color: #545454;
+    }
+
+    header, footer, section, article, aside, nav, hgroup, details, menu, figure, figcaption {
+      display: block;
+      margin: 0;
+      padding: 0;
+    }
+
+    label {
+      display: inline-block;
+      cursor: pointer;
+      vertical-align: middle;
+    }
+
     a {
     color: inherit;
     text-decoration: none;
