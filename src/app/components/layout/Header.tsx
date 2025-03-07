@@ -72,7 +72,7 @@ const Header = () => {
                     <button type="button" className="btn btn-link">로그인</button>
                 </Link>
                 |
-                <Link href="/">
+                <Link href="/user/join">
                     <button type="button" className="btn btn-link">회원가입</button>
                 </Link>
             </div>

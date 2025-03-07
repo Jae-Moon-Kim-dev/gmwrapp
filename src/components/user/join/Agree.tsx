@@ -1,29 +1,9 @@
-"use client"
-
+import React, { ReactNode } from 'react';
 import * as S from '@/styles/user/join/UserAgree.styled';
-import React from 'react';
 
-const User = () => {
-  return (
-    <div className='container'>
-      <h3 className='display-5 mt-4' >회원가입</h3>
-      <ul className="nav nav-tabs nav-fill mt-5" role="tablist">
-        <li className="nav-item" role="presentation">
-          <a className="nav-link" data-bs-toggle="tab" href="#agree" aria-selected="false" role="tab">01. 약관동의</a>
-        </li>
-        <li className="nav-item" role="presentation">
-          <a className="nav-link active" data-bs-toggle="tab" href="#certification" aria-selected="true" role="tab">02. 본인인증</a>
-        </li>
-        <li className="nav-item" role="presentation">
-          <a className="nav-link" data-bs-toggle="tab" href="#infoInput" aria-selected="false" role="tab">03. 정보입력</a>
-        </li>
-        <li className="nav-item" role="presentation">
-          <a className="nav-link" data-bs-toggle="tab" href="#completed" aria-selected="false" role="tab">04. 가입완료</a>
-        </li>
-      </ul>
-      <div id="myTabContent" className="tab-content mt-2">
-        <S.AgreeContainer className="tab-pane fade p-4" id="agree" role="tabpanel">
-          <form id="frmAgree" method="post" action="/member/step1">
+const Agree = ({className}:{className:string}):ReactNode => {
+    return <>
+        <S.AgreeContainer className={className} id="agree" role="tabpanel">
           <input type="hidden" name="csrf_t" value="de95e23d7ad6b60b6ebd50fa4e5d8263" />
           <S.BoxType1 className="container-fluid d-flex justify-content-center">
             <div className='px-2' >
@@ -343,24 +323,12 @@ const User = () => {
             </S.TermBox>
           </S.MiddleTitle>
           
-          </form>
           <S.AgreeButtonWrapBox>
             <S.AgreeButton className='firstBtn' id="agree">동의</S.AgreeButton>
             <S.AgreeButton onClick={()=>{history.back();}}>동의하지 않음</S.AgreeButton>
           </S.AgreeButtonWrapBox>
         </S.AgreeContainer>
-        <div className="tab-pane fade active show" id="certification" role="tabpanel">
-          <p>Food truck fixie locavore, accusamus mcsweeney&apos;s marfa nulla single-origin coffee squid. Exercitation +1 labore velit, blog sartorial PBR leggings next level wes anderson artisan four loko farm-to-table craft beer twee. Qui photo booth letterpress, commodo enim craft beer mlkshk aliquip jean shorts ullamco ad vinyl cillum PBR. Homo nostrud organic, assumenda labore aesthetic magna delectus mollit.</p>
-        </div>
-        <div className="tab-pane fade" id="infoInput">
-          <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney&apos;s organic lomo retro fanny pack lo-fi farm-to-table readymade. Messenger bag gentrify pitchfork tattooed craft beer, iphone skateboard locavore carles etsy salvia banksy hoodie helvetica. DIY synth PBR banksy irony. Leggings gentrify squid 8-bit cred pitchfork.</p>
-        </div>
-        <div className="tab-pane fade" id="completed">
-          <p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin. Cred vinyl keffiyeh DIY salvia PBR, banh mi before they sold out farm-to-table VHS viral locavore cosby sweater.</p>
-        </div>
-      </div>
-    </div>
-  );
+    </>;
 }
 
-export default User;
+export default Agree;
