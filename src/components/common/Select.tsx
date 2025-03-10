@@ -14,6 +14,11 @@ const ComSelect = ({
           width: '200px',
           backgroundColor: "white",
           boxShadow: "none",
+          border: '1px solid #cccccc',
+          ":hover": {
+            ...provided[":hover"],
+            border: '1px solid #cccccc',
+          }
         }),
         option:(provided, {isFocused, isSelected}) => ({
             ...provided,
@@ -22,7 +27,7 @@ const ComSelect = ({
                 background: isSelected ? '#E8E8E8' : 'transparent'
             },
             backgroundColor: isFocused ? '#E8E8E8' : 'transparent',
-            color: isSelected ? 'hsl(0, 0%, 20%)' : 'hsl(0, 0%, 20%)'
+            color: 'hsl(0, 0%, 20%)'
         }),
         menu: (provided) => ({
             ...provided,
