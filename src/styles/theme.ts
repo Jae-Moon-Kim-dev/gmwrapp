@@ -8,6 +8,7 @@ export const theme: DefaultTheme = {
         yellow: '#edb83c',
         orange: '#eb7952',
         gray: '#6e6e6e',
+        white: '#ffffff',
         gray_background: '#f5f5f5',
     },
 };

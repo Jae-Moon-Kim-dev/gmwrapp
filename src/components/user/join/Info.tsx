@@ -1,21 +1,68 @@
+import ComSelect from '@/components/common/Select';
 import Image from 'next/image';
 import React, { ReactNode } from 'react';
+import * as S from '@/styles/user/join/UserInfo.styled';
 
 const Info = ({className}:{className:string}):ReactNode => {
-    return <div className={className} id="infoInput">
-        <ul className="tab_memJoin">
-			<li>01. 약관동의 </li>
-			<li>02. 본인인증</li>
-			<li className="on">03. 정보입력</li>
-			<li>04. 가입완료</li>
-		</ul>
-			
-		<h2 className="hide">정보입력</h2>
-		<section className="sct infoInp">
-			<h3>입력사항</h3>
-			<div className="guideTxt">
-				<Image src="url('/images/common/ico_check.png')" alt="체크표시" width={13} height={13} />는 필수 입력 사항입니다.
+
+	const emailData = [
+		{ label: '직접 입력', value: ''},
+		{ label: 'daum.net', value: 'daum.net'},
+		{ label: 'gmail.com', value: 'gmail.com'},
+		{ label: 'nate.com', value: 'nate.com'},
+		{ label: 'naver.com', value: 'naver.com'},
+		{ label: 'hotmail.com', value: 'hotmail.com'},
+	];
+
+    return <S.InfoContainer className={className} id="infoInput">
+        <S.MiddleTitle className="sct infoInp">
+			<div className='row'>
+				<div className='col-2'>
+					<h3>입력사항</h3>
+				</div>
+				<div className='col-6'>&nbsp;</div>
+				<div className='col-4 text-end pt-2' >
+					<Image src="/images/common/ico_check.png" alt="체크표시" width={13} height={13} />는 필수 입력 사항입니다.
+				</div>
 			</div>
+
+			<S.LayoutTbl>
+				<div className='row'>
+					<S.Tit className='col-3'>
+						<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
+						<label htmlFor="mj_name" className="compulsory">이름</label>
+					</S.Tit>
+					<S.Cont className='col-2'>
+						<S.InputJo type="text" id="memName" name="memName" placeholder="홍길동" alt="이름" />
+					</S.Cont>
+					<S.RadioWrap className="col-7 inputWrap">
+						<input type="radio" name="sex" id="gender_1" value="M" checked={true} />
+						<label htmlFor="gender_1">남</label>
+						
+						<input type="radio" name="sex" id="gender_2" value="F" />
+						<label htmlFor="gender_2">여</label>
+					</S.RadioWrap>
+				</div>
+				<div className='row'>
+					<S.Tit className='col-3'>
+						<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
+						<label htmlFor="mailID" className="compulsory">이메일</label>
+					</S.Tit>
+					<S.Cont className='col-9'>
+						<div className='d-flex' >
+							<div>
+								<S.InputJo type="text" id="mailID" name="mailID" alt="이메일" />
+								<span className='pe-1' >@</span>
+								<S.InputJo type="text" className='pe-1' id="mailAddr" name="mailAddr" alt="이메일" />
+							</div>
+							<div className='ps-2'>
+								<ComSelect data={emailData} />
+							</div>
+						</div>
+					</S.Cont>
+				</div>
+				
+			</S.LayoutTbl>
 			
 			<table className="layoutTbl line">
 				<colgroup>
@@ -25,24 +72,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 				<tbody>
 					<tr>
 						<td className="tit">
-                            <Image src="url('/images/common/ico_check.png')" width={13} height={13} alt="필수" />
-							<label htmlFor="mj_name" className="compulsory">이름</label>
-						</td>
-						<td className="cont">
-							<input type="text" className="inputJo w70 requ" id="memName" name="memName" placeholder="홍길동" alt="이름" />
-							<div className="inputWrap" style={{marginTop:"8px"}}>
-								<input type="radio" name="sex" id="gender_1" value="M" checked={true} style={{WebkitAppearance:"radio"}} />
-								<label htmlFor="gender_1">남</label>
-								
-								<input type="radio" name="sex" id="gender_2" value="F" style={{WebkitAppearance:"radio"}} />
-								<label htmlFor="gender_2">여</label>
-							</div>
-						</td>
-					</tr>
-					
-					<tr>
-						<td className="tit">
-							<Image src="url('/images/common/ico_check.png')" width={13} height={13} alt="필수" />
+							<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
 							<label htmlFor="mailID" className="compulsory">이메일</label>
 						</td>
 						<td className="cont">
@@ -62,7 +92,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 					
 					<tr>
 						<td className="tit">
-							<Image src="url('/images/common/ico_check.png')" width={13} height={13} alt="필수" />
+							<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
 							<span className="compulsory">휴대폰 번호</span>
 						</td>
 						<td className="cont">
@@ -95,7 +125,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 					
 					<tr>
 						<td className="tit">
-							<Image src="url('/images/common/ico_check.png')" width={13} height={13} alt="필수" />
+							<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
 							<span className="compulsory">생년월일</span>
 						</td>
 						<td className="cont">
@@ -447,7 +477,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 					
 					<tr>
 						<td className="tit">
-							<Image src="url('/images/common/ico_check.png')" width={13} height={13} alt="필수" />
+							<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
 							<label htmlFor="mj_id" className="compulsory">아이디</label>
 						</td>
 						<td className="cont">
@@ -457,7 +487,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 						
 					<tr>
 						<td className="tit">
-							<Image src="url('/images/common/ico_check.png')" width={13} height={13} alt="필수" />
+							<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
 							<label htmlFor="mj_id" className="compulsory">비밀번호</label>
 						</td>
 						<td className="cont">
@@ -470,7 +500,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 					
 					<tr>
 						<td className="tit">
-							<Image src="url('/images/common/ico_check.png')" width={13} height={13} alt="필수" />
+							<Image src="/images/common/ico_check.png" width={13} height={13} alt="필수" />
 							<label htmlFor="mj_id_com" className="compulsory">비밀번호 확인</label>
 						</td>
 						<td className="cont">
@@ -498,7 +528,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 					</tr>
 				</tbody>
 			</table>
-		</section>
+		</S.MiddleTitle>
 		<div className="btnWrap mgtS">
 			<input type="button" className="btn mj big" id="addInp" value="추가 정보 입력" />
 			<input type="button" className="btn big" value="입력 완료" onClick={() => {}} /> {/**saveInfo(); */}
@@ -562,7 +592,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 				</tbody>
 			</table>
 		</section>
-    </div>;
+    </S.InfoContainer>;
 }
 
 export default Info;

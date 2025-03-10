@@ -18,6 +18,7 @@
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.9",
     "react-dom": "^19.0.0",
+    "react-select": "^5.10.1",
     "sass": "^1.85.1",
     "styled-components": "^6.1.15",
     "styled-normalize": "^8.1.1",
