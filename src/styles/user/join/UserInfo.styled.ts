@@ -58,3 +58,43 @@ export const RadioWrap = styled.div`
         padding: 0 0 6px 2px;
     }
 `;
+
+export const GuideTxt = styled.div`
+    font-weight: bold;
+    font-size: 13px;
+    color: #e40e64;
+`;
+
+export const NotiTxt = styled.div`
+    font-size: 11px;
+    color: #e40e64;
+`;
+
+export const InfoButtonWrapBox = styled.div`
+    float: left;
+    width: 100%;
+    margin: 15px 0 30px 0;
+    text-align: center;
+    &::after {
+        display: block;
+        content: "";
+        clear: both;
+    }
+`;
+
+export const InfoButton = styled.button`
+    width: 195px;
+    height: 48px;
+    line-height: 48px;
+    font-size: 15px;
+    font-weight: normal;
+    margin: 0 2px;
+    display: inline-block;
+    border: 1px solid #d6d6d6;
+    text-align: center;
+    background: #fff;
+    vertical-align: top;
+    padding: 0;
+    cursor: pointer;
+    letter-spacing: -1px;
+`;

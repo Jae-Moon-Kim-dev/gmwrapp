@@ -1,17 +1,23 @@
 import { SelectData } from "@/app/types/common/select";
-import React, { ReactNode, useState } from "react";
-import { OnChangeValue, StylesConfig } from "react-select";
+import React, { ReactNode } from "react";
+import { ActionMeta, SingleValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
 const ComSelect = ({
-    data, 
+    data,
+    width = '200px',
+    setSelectValue,
+    handleChange, 
 }:{
     data: SelectData[],
+    width?: string,
+    setSelectValue: React.Dispatch<React.SetStateAction<SelectData>>,
+    handleChange?: (() => void) | undefined,
 }):ReactNode => {
     const customStyles: StylesConfig<SelectData> = {
         control: (provided) => ({
           ...provided,
-          width: '200px',
+          width,
           backgroundColor: "white",
           boxShadow: "none",
           border: '1px solid #cccccc',
@@ -31,20 +37,20 @@ const ComSelect = ({
         }),
         menu: (provided) => ({
             ...provided,
-            width:'200px',
+            width,
         }),
       };
 
-    const [selectValue, setSelectValue] = useState<SelectData | null>(data[0]);
-
-    const handleChange = (option: OnChangeValue<SelectData, false>) => {
-        setSelectValue(option as SelectData);
+      const onChange = (e: any) => {
+        console.log('ComSelect-handleChange');
+        setSelectValue(e);
+        if (handleChange) handleChange();
     }
 
     return <Select
         options={data}
         isMulti={false}
-        onChange={(e:OnChangeValue<SelectData, false>) => handleChange(e)}
+        onChange={onChange}
         styles= {customStyles}
         defaultValue={data[0]}
     />;
