@@ -1,3 +1,5 @@
+"use client"
+
 import { TableProps } from '@/app/types/common/table';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import React, { ReactNode } from 'react';

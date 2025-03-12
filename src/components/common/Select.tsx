@@ -1,3 +1,5 @@
+"use client"
+
 import { SelectData } from "@/app/types/common/select";
 import React, { ReactNode } from "react";
 import { ActionMeta, SingleValue, StylesConfig } from "react-select";

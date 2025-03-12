@@ -1,7 +1,17 @@
-import React, { ReactNode } from 'react';
+"use client"
+
+import React, { ReactNode, useCallback, useContext } from 'react';
 import * as S from '@/styles/user/join/UserAgree.styled';
+import { TabContext } from '@/context/TabProvider';
 
 const Agree = ({className}:{className:string}):ReactNode => {
+    const { tab, setTab } = useContext(TabContext);
+    
+    const goNextPage = useCallback(() => {
+      setTab('info');
+      console.log('Agree page', tab);
+    }, []);
+
     return <>
         <S.AgreeContainer className={className} id="agree" role="tabpanel">
           <input type="hidden" name="csrf_t" value="de95e23d7ad6b60b6ebd50fa4e5d8263" />
@@ -324,7 +334,7 @@ const Agree = ({className}:{className:string}):ReactNode => {
           </S.MiddleTitle>
           
           <S.AgreeButtonWrapBox>
-            <S.AgreeButton className='firstBtn' id="agree">동의</S.AgreeButton>
+            <S.AgreeButton onClick={goNextPage} className='firstBtn' id="agree">동의</S.AgreeButton>
             <S.AgreeButton onClick={()=>{history.back();}}>동의하지 않음</S.AgreeButton>
           </S.AgreeButtonWrapBox>
         </S.AgreeContainer>

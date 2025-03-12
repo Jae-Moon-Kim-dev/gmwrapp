@@ -2,12 +2,15 @@
 
 import ComSelect from '@/components/common/Select';
 import Image from 'next/image';
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import * as S from '@/styles/user/join/UserInfo.styled';
 import { SelectData } from '@/app/types/common/select';
 import dayjs from 'dayjs';
+import { TabContext } from '@/context/TabProvider';
 
 const Info = ({className}:{className:string}):ReactNode => {
+	const { setTab } = useContext(TabContext);
+
 	const [infoEmail, setInfoEmail] = useState<SelectData>({ label: '직접 입력', value: ''});
 	const [infoYear, setInfoYear] = useState<SelectData>({ label: '년도', value: '' });
 	const [infoMonth, setInfoMonth] = useState<SelectData>({ label: '월', value: '' });
@@ -17,6 +20,10 @@ const Info = ({className}:{className:string}):ReactNode => {
 	const [infoDay2, setInfoDay2] = useState<SelectData>({ label: '일', value: '' });
 	const [dayDatas, setDayDatas] = useState<SelectData[]>([{ label: '일', value: '' }]);
 	const [dayDatas2, setDayDatas2] = useState<SelectData[]>([{ label: '일', value: '' }]);
+
+	const goNextPage = () => {
+		setTab('complete');
+	}
 
 	const emailData = [
 		{ label: '직접 입력', value: ''},
@@ -286,7 +293,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 			</S.LayoutTbl>
 		</S.MiddleTitle>
 		<S.InfoButtonWrapBox>
-			<S.InfoButton onClick={() => {}} >입력 완료</S.InfoButton> {/**saveInfo(); */}
+			<S.InfoButton onClick={goNextPage} >입력 완료</S.InfoButton> {/**saveInfo(); */}
 		</S.InfoButtonWrapBox>
     </S.InfoContainer>;
 }
