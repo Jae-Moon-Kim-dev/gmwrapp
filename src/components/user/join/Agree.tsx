@@ -3,10 +3,21 @@
 import React, { ReactNode, useCallback, useContext } from 'react';
 import * as S from '@/styles/user/join/UserAgree.styled';
 import { TabContext } from '@/context/TabProvider';
+import { useForm } from 'react-hook-form';
 
 const Agree = ({className}:{className:string}):ReactNode => {
     const { tab, setTab } = useContext(TabContext);
     
+    const form = useForm({
+      defaultValues: {
+        memAgrAll: false,
+        memAgr1: false,
+        memAgr2: false,
+      }  
+    });
+
+    const { register } = form;
+
     const goNextPage = useCallback(() => {
       setTab('info');
       console.log('Agree page', tab);
@@ -17,22 +28,22 @@ const Agree = ({className}:{className:string}):ReactNode => {
           <input type="hidden" name="csrf_t" value="de95e23d7ad6b60b6ebd50fa4e5d8263" />
           <S.BoxType1 className="container-fluid d-flex justify-content-center">
             <div className='px-2' >
-              <label className="form-check-label text-center" htmlFor="agr1">
+              <label className="form-check-label text-center" htmlFor="agrAll">
                   이용약관, 개인정보 수집 및 이용에 모두 동의합니다.
               </label>
             </div>
             <div className="form-check">
-              <input className="form-check-input" type="checkbox" name="memAgr" value="allCheck" id="agr1" />
+              <input className="form-check-input" type="checkbox" {...register('memAgrAll')} id="agrAll" />
             </div>
           </S.BoxType1>
           
           <S.MiddleTitle>
             <h3 className='float-start' >1. 이용약관</h3>
             <div className="form-check float-end mt-1">
-              <input className="form-check-input" type="checkbox" name="memAgr" value="Y" id="agr2" />
+              <input className="form-check-input" type="checkbox" {...register('memAgr1')} id="agr1" />
             </div>
             <div className="px-2 float-end mt-1">
-              <label className="form-check-label text-center" htmlFor="agr2">[필수]동의합니다.</label>
+              <label className="form-check-label text-center" htmlFor="agr1">[필수]동의합니다.</label>
             </div>
             <S.TermBox >
               제 1 조 (목적)
@@ -221,10 +232,10 @@ const Agree = ({className}:{className:string}):ReactNode => {
           <S.MiddleTitle>
             <h3>2. 개인정보 수집 및 이용에 대한 안내</h3>
             <div className="form-check float-end mt-1">
-              <input className="form-check-input" type="checkbox" name="memAgr" value="Y" id="agr3" />
+              <input className="form-check-input" type="checkbox" {...register('memAgr2')} id="agr2" />
             </div>
             <div className="px-2 float-end mt-1">
-              <label className="form-check-label text-center" htmlFor="agr3">[필수]동의합니다.</label>
+              <label className="form-check-label text-center" htmlFor="agr2">[필수]동의합니다.</label>
             </div>
             <S.TermBox>
               1. 개인정보 수집에 대한 동의<br/>
