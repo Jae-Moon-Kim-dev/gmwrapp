@@ -1,27 +1,42 @@
 "use client"
 
-import React, { ReactNode, useCallback, useContext } from 'react';
+import React, { ChangeEvent, ReactNode, useContext } from 'react';
 import * as S from '@/styles/user/join/UserAgree.styled';
 import { TabContext } from '@/context/TabProvider';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch, Controller } from 'react-hook-form';
 
 const Agree = ({className}:{className:string}):ReactNode => {
-    const { tab, setTab } = useContext(TabContext);
-    
-    const form = useForm({
-      defaultValues: {
-        memAgrAll: false,
-        memAgr1: false,
-        memAgr2: false,
-      }  
-    });
+  const { tab, setTab } = useContext(TabContext);
+  
+  const form = useForm({
+    defaultValues: {
+      memAgrAll: false,
+      memAgr1: false,
+      memAgr2: false,
+    }  
+  });
+  const { control, setValue, getValues } = form;
+  const memAgrAll = useWatch({
+    control,
+    name: 'memAgrAll',
+  });
+  const memAgr1 = useWatch({
+    control,
+    name: 'memAgr1',
+  });
+  const memAgr2 = useWatch({
+    control,
+    name: 'memAgr2',
+  });
 
-    const { register } = form;
-
-    const goNextPage = useCallback(() => {
+  
+    const goNextPage = () => {
+      const { memAgrAll, memAgr1, memAgr2 } = getValues();
       setTab('info');
       console.log('Agree page', tab);
-    }, []);
+      console.log(memAgrAll, memAgr1, memAgr2);
+
+    };
 
     return <>
         <S.AgreeContainer className={className} id="agree" role="tabpanel">
@@ -33,14 +48,56 @@ const Agree = ({className}:{className:string}):ReactNode => {
               </label>
             </div>
             <div className="form-check">
-              <input className="form-check-input" type="checkbox" {...register('memAgrAll')} id="agrAll" />
+              <Controller 
+                name='memAgrAll'
+                control={control}
+                render={({field: {onChange}}) => (
+                  <>
+                    <input 
+                      className="form-check-input" 
+                      type="checkbox" 
+                      onChange={(event:ChangeEvent<HTMLInputElement>) => {
+                        onChange();
+                        setValue('memAgrAll', event.target.checked);
+                        if (event.target.checked) {
+                          setValue('memAgr1', true);
+                          setValue('memAgr2', true);
+                        } else {
+                          setValue('memAgr1', false);
+                          setValue('memAgr2', false);
+                        }
+                      }} 
+                      checked={memAgrAll} 
+                      id="agrAll" 
+                    />
+                  </>
+                )}
+              />
             </div>
           </S.BoxType1>
           
           <S.MiddleTitle>
             <h3 className='float-start' >1. 이용약관</h3>
             <div className="form-check float-end mt-1">
-              <input className="form-check-input" type="checkbox" {...register('memAgr1')} id="agr1" />
+              <Controller 
+                name='memAgr1'
+                control={control}
+                render={({field: {onChange}}) => (
+                  <>
+                    <input 
+                      className="form-check-input" 
+                      type="checkbox" 
+                      onChange={(event:ChangeEvent<HTMLInputElement>) => {
+                        const { memAgr2 } = getValues();
+                        onChange();
+                        setValue('memAgr1', event.target.checked);
+                        if ( event.target.checked && memAgr2 ) setValue('memAgrAll', true);
+                        else setValue('memAgrAll', false);
+                      }} 
+                      checked={memAgr1} id="agr1" />
+                  </>
+                )}
+              />
             </div>
             <div className="px-2 float-end mt-1">
               <label className="form-check-label text-center" htmlFor="agr1">[필수]동의합니다.</label>
@@ -232,7 +289,26 @@ const Agree = ({className}:{className:string}):ReactNode => {
           <S.MiddleTitle>
             <h3>2. 개인정보 수집 및 이용에 대한 안내</h3>
             <div className="form-check float-end mt-1">
-              <input className="form-check-input" type="checkbox" {...register('memAgr2')} id="agr2" />
+              <Controller 
+                name='memAgr2'
+                control={control}
+                render={({field: {onChange}}) => (
+                  <>
+                    <input 
+                      className="form-check-input" 
+                      type="checkbox" 
+                      onChange={(event:ChangeEvent<HTMLInputElement>) => {
+                        onChange();
+                        const { memAgr1 } = getValues();
+                        setValue('memAgr2', event.target.checked);
+                        if ( event.target.checked && memAgr1 ) setValue('memAgrAll', true);
+                        else setValue('memAgrAll', false);
+                      }} 
+                      checked={memAgr2} 
+                      id="agr2" />
+                  </>
+                )}
+              />
             </div>
             <div className="px-2 float-end mt-1">
               <label className="form-check-label text-center" htmlFor="agr2">[필수]동의합니다.</label>

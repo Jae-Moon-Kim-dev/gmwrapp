@@ -2,7 +2,7 @@
 
 import ComSelect from '@/components/common/Select';
 import Image from 'next/image';
-import React, { ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import * as S from '@/styles/user/join/UserInfo.styled';
 import { SelectData } from '@/app/types/common/select';
 import dayjs from 'dayjs';
