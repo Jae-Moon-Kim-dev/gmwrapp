@@ -5,7 +5,7 @@ import React, { ReactNode } from "react";
 import { ActionMeta, SingleValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
-const ComSelect = ({
+const CommonSelect = ({
     data,
     width = '200px',
     setSelectValue,
@@ -58,4 +58,4 @@ const ComSelect = ({
     />;
 }
 
-export default ComSelect;
+export default CommonSelect;

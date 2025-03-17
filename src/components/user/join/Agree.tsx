@@ -5,17 +5,14 @@ import * as S from '@/styles/user/join/UserAgree.styled';
 import { TabContext } from '@/context/TabProvider';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import CommonModal from '@/components/common/Modal';
+import { initTermAgree } from '@/app/types/user/common';
 
 const Agree = ({className}:{className:string}):ReactNode => {
-  const { tab, setTab } = useContext(TabContext);
+  const { tab, setTab, setAgree } = useContext(TabContext);
   const [ modalShow, setModalShow ] = useState<boolean>(false);
   
   const form = useForm({
-    defaultValues: {
-      memAgrAll: false,
-      memAgr1: false,
-      memAgr2: false,
-    }  
+    defaultValues: initTermAgree,  
   });
   const { control, setValue, getValues } = form;
   const memAgrAll = useWatch({
@@ -36,6 +33,11 @@ const Agree = ({className}:{className:string}):ReactNode => {
       const { memAgrAll, memAgr1, memAgr2 } = getValues();
       
       if ( memAgrAll ) {
+        setAgree({
+          memAgrAll,
+          memAgr1,
+          memAgr2,
+        });
         setTab('info');
       } else {
         setModalShow(true);
@@ -431,12 +433,12 @@ const Agree = ({className}:{className:string}):ReactNode => {
           </S.AgreeButtonWrapBox>
         </S.AgreeContainer>
         <CommonModal 
-          sise="sm"
+          size="sm"
           aria-labelledby="contained-modal-title-vcenter"
           centered
           show={modalShow} 
           onHide={() => setModalShow(false)} 
-          bodyContent={<p> 이용약관에 동의하셔야 합니다. </p>}
+          bodyContent={<p className='p-3 fw-bold' > 이용약관에 동의하셔야 합니다. </p>}
           closeLabel='확인'
         />
     </>;

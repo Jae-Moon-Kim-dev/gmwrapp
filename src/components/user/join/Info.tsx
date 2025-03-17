@@ -1,12 +1,13 @@
 "use client"
 
-import ComSelect from '@/components/common/Select';
+import CommonSelect from '@/components/common/Select';
 import Image from 'next/image';
-import React, { ReactNode, useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactNode, useContext, useEffect, useState } from 'react';
 import * as S from '@/styles/user/join/UserInfo.styled';
 import { SelectData } from '@/app/types/common/select';
 import dayjs from 'dayjs';
 import { TabContext } from '@/context/TabProvider';
+import { Controller, useForm } from 'react-hook-form';
 
 const Info = ({className}:{className:string}):ReactNode => {
 	const { setTab } = useContext(TabContext);
@@ -21,8 +22,37 @@ const Info = ({className}:{className:string}):ReactNode => {
 	const [dayDatas, setDayDatas] = useState<SelectData[]>([{ label: '일', value: '' }]);
 	const [dayDatas2, setDayDatas2] = useState<SelectData[]>([{ label: '일', value: '' }]);
 
-	const goNextPage = () => {
-		setTab('complete');
+	const form = useForm({
+		defaultValues: {
+			memName: '',
+			gender1: 'M',
+			mailID: '',
+			mailAddr: '',
+			selMailAddr: '',
+			celNum1: '',
+			celNum2: '',
+			celNum3: '',
+			selYear1: '',
+			selMonth1: '',
+			selDay1: '',
+			parentNm: '',
+			gender2: '',
+			selYear2: '',
+			selMonth2: '',
+			selDay2: '',
+			parentCelNum1: '',
+			parentCelNum2: '',
+			parentCelNum3: '',
+			memId: '',
+			memPwd: '',
+		}
+	  });
+
+	const { control, trigger, setValue } = form;
+
+	const goNextPage = async () => {
+		console.log(trigger());
+		// setTab('complete');
 	}
 
 	const emailData = [
@@ -117,7 +147,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 		isYoungOld();
 	}, [infoDay]);
 
-    return <S.InfoContainer className={className} id="infoInput">
+	return <S.InfoContainer className={className} id="infoInput">
         <S.MiddleTitle className="sct infoInp">
 			<div className='row'>
 				<div className='col-2'>
@@ -136,7 +166,26 @@ const Info = ({className}:{className:string}):ReactNode => {
 						<label htmlFor="memName" className="compulsory">이름</label>
 					</S.Tit>
 					<S.Cont className='col-2'>
-						<S.InputJo type="text" id="memName" name="memName" placeholder="홍길동" alt="이름" />
+						<Controller
+							name='memName'
+							control={control}
+							rules={{ required: true }}
+							render={({field , field: {onChange}}) => (
+								<>
+									<S.InputJo
+									    {...field}
+										type="text" 
+										id="memName" 
+										placeholder="홍길동" 
+										alt="이름"
+										onChange={(e:ChangeEvent<HTMLInputElement>) => {
+											onChange(e);
+											setValue('memName', e.target.value, { shouldValidate: true });
+										}}
+									/>
+								</>
+							)}
+						/>
 					</S.Cont>
 					<S.RadioWrap className="col-7 inputWrap">
 						<input type="radio" name="sex" id="gender_1" value="M" checked={true} />
@@ -159,7 +208,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<S.InputJo type="text" className='pe-1' id="mailAddr" name="mailAddr" alt="이메일" />
 							</div>
 							<div className='ps-2'>
-								<ComSelect data={emailData} setSelectValue={setInfoEmail} />
+								<CommonSelect data={emailData} setSelectValue={setInfoEmail} />
 							</div>
 						</div>
 					</S.Cont>
@@ -186,11 +235,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 					</S.Tit>
 					<S.Cont className='col-9'>
 						<div className='d-flex' id="sel_year1" >
-							<ComSelect data={yearData()} width="100px" setSelectValue={setInfoYear} />{/** sel_year1 */}
+							<CommonSelect data={yearData()} width="100px" setSelectValue={setInfoYear} />{/** sel_year1 */}
 							<div className='py-2 px-2' >년</div>
-							<ComSelect data={monthData()} width="100px" setSelectValue={setInfoMonth} />{/** sel_month1 */}
+							<CommonSelect data={monthData()} width="100px" setSelectValue={setInfoMonth} />{/** sel_month1 */}
 							<div className='py-2 px-2' >월</div>
-							<ComSelect data={dayDatas} width="100px" setSelectValue={setInfoDay} />{/** sel_day1 */}
+							<CommonSelect data={dayDatas} width="100px" setSelectValue={setInfoDay} />{/** sel_day1 */}
 							<div className='py-2 px-2' >일</div>
 						</div>
 					</S.Cont>
@@ -231,11 +280,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 							</S.Tit>
 							<S.Cont className='col-9'>
 								<div className='d-flex' id="sel_year2" >
-									<ComSelect data={yearData()} width="100px" setSelectValue={setInfoYear2} />{/** sel_year2 */}
+									<CommonSelect data={yearData()} width="100px" setSelectValue={setInfoYear2} />{/** sel_year2 */}
 									<div className='py-2 px-2' >년</div>
-									<ComSelect data={monthData()} width="100px" setSelectValue={setInfoMonth2} />{/** sel_month2 */}
+									<CommonSelect data={monthData()} width="100px" setSelectValue={setInfoMonth2} />{/** sel_month2 */}
 									<div className='py-2 px-2' >월</div>
-									<ComSelect data={dayDatas2} width="100px" setSelectValue={setInfoDay2} />{/** sel_day2 */}
+									<CommonSelect data={dayDatas2} width="100px" setSelectValue={setInfoDay2} />{/** sel_day2 */}
 									<div className='py-2 px-2' >일</div>
 								</div>
 							</S.Cont>
