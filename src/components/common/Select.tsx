@@ -1,7 +1,7 @@
 "use client"
 
 import { SelectData } from "@/app/types/common/select";
-import React, { ReactNode } from "react";
+import React, { ChangeEvent, ReactNode } from "react";
 import { ActionMeta, SingleValue, StylesConfig } from "react-select";
 import Select from "react-select";
 
@@ -14,7 +14,7 @@ const CommonSelect = ({
     data: SelectData[],
     width?: string,
     setSelectValue: React.Dispatch<React.SetStateAction<SelectData>>,
-    handleChange?: (() => void) | undefined,
+    handleChange?: ((e:ChangeEvent<HTMLInputElement>) => void) | undefined,
 }):ReactNode => {
     const customStyles: StylesConfig<SelectData> = {
         control: (provided) => ({
@@ -46,7 +46,7 @@ const CommonSelect = ({
       const onChange = (e: any) => {
         console.log('ComSelect-handleChange');
         setSelectValue(e);
-        if (handleChange) handleChange();
+        if (handleChange) handleChange(e);
     }
 
     return <Select

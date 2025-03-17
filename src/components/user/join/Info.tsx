@@ -45,13 +45,16 @@ const Info = ({className}:{className:string}):ReactNode => {
 			parentCelNum3: '',
 			memId: '',
 			memPwd: '',
+			memPwdConfirm: '',
 		}
 	  });
 
-	const { control, trigger, setValue } = form;
+	const { control, trigger, setValue, getValues } = form;
 
 	const goNextPage = async () => {
-		console.log(trigger());
+		const { memName, gender1 } = getValues();
+		console.log('memName', memName, await trigger('memName'));
+		console.log('gender1', gender1, await trigger('gender1'));
 		// setTab('complete');
 	}
 
@@ -171,28 +174,32 @@ const Info = ({className}:{className:string}):ReactNode => {
 							control={control}
 							rules={{ required: true }}
 							render={({field , field: {onChange}}) => (
-								<>
-									<S.InputJo
-									    {...field}
-										type="text" 
-										id="memName" 
-										placeholder="홍길동" 
-										alt="이름"
-										onChange={(e:ChangeEvent<HTMLInputElement>) => {
-											onChange(e);
-											setValue('memName', e.target.value, { shouldValidate: true });
-										}}
-									/>
-								</>
+								<S.InputJo
+									{...field}
+									type="text" 
+									id="memName" 
+									placeholder="홍길동" 
+									alt="이름"
+									onChange={onChange}
+								/>
 							)}
 						/>
 					</S.Cont>
 					<S.RadioWrap className="col-7 inputWrap">
-						<input type="radio" name="sex" id="gender_1" value="M" checked={true} />
-						<label htmlFor="gender_1">남</label>
-						
-						<input type="radio" name="sex" id="gender_2" value="F" />
-						<label htmlFor="gender_2">여</label>
+						<Controller
+							name='gender1'
+							control={control}
+							rules={{ required: true }}
+							render={({field , field: {onChange}}) => (
+								<>
+									<input {...field} type="radio" onChange={onChange} id="gender_1" value="M" />
+									<label htmlFor="gender_1">남</label>
+									
+									<input {...field} type="radio" onChange={onChange} id="gender_2" value="F" />
+									<label htmlFor="gender_2">여</label>
+								</>
+							)}
+						/>
 					</S.RadioWrap>
 				</div>
 				<div className='row'>
@@ -203,12 +210,34 @@ const Info = ({className}:{className:string}):ReactNode => {
 					<S.Cont className='col-9'>
 						<div className='d-flex' >
 							<div>
-								<S.InputJo type="text" id="mailID" name="mailID" alt="이메일" />
+								<Controller
+									name='mailID'
+									control={control}
+									rules={{ required: true }}
+									render={({field , field: {onChange}}) => (
+										<S.InputJo {...field} type="text" onChange={onChange} id="mailID" alt="이메일" />
+									)}
+								/>	
 								<span className='pe-1' >@</span>
-								<S.InputJo type="text" className='pe-1' id="mailAddr" name="mailAddr" alt="이메일" />
+								<Controller
+									name='mailAddr'
+									control={control}
+									rules={{ required: true }}
+									render={({field , field: {onChange}}) => (
+										<S.InputJo {...field} type="text" onChange={onChange} className='pe-1' id="mailAddr" alt="이메일" />
+									)}
+								/>
+
 							</div>
 							<div className='ps-2'>
-								<CommonSelect data={emailData} setSelectValue={setInfoEmail} />
+								<Controller
+									name='selMailAddr'
+									control={control}
+									rules={{ required: true }}
+									render={({field , field: {onChange}}) => (
+										<CommonSelect {...field} data={emailData} handleChange={onChange} setSelectValue={setInfoEmail} />
+									)}
+								/>
 							</div>
 						</div>
 					</S.Cont>
@@ -222,9 +251,23 @@ const Info = ({className}:{className:string}):ReactNode => {
 						<div className='d-flex' >
 							<span className='py-2' id="celNum" >010</span>
 							<span className='py-2 px-1'>-</span>
-							<S.InputJo type="text" className='mx-1' maxLength={4} name="celNum" alt="휴대폰 번호" />
+							<Controller
+								name='celNum2'
+								control={control}
+								rules={{ required: true, maxLength: 4 }}
+								render={({field , field: {onChange}}) => (
+									<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+								)}
+							/>
 							<span className='py-2 px-1'>-</span>
-							<S.InputJo type="text" className='mx-1' maxLength={4} name="celNum" alt="휴대폰 번호" />
+							<Controller
+								name='celNum3'
+								control={control}
+								rules={{ required: true, maxLength: 4 }}
+								render={({field , field: {onChange}}) => (
+									<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+								)}
+							/>
 						</div>
 					</S.Cont>
 				</div>
@@ -235,12 +278,33 @@ const Info = ({className}:{className:string}):ReactNode => {
 					</S.Tit>
 					<S.Cont className='col-9'>
 						<div className='d-flex' id="sel_year1" >
-							<CommonSelect data={yearData()} width="100px" setSelectValue={setInfoYear} />{/** sel_year1 */}
-							<div className='py-2 px-2' >년</div>
-							<CommonSelect data={monthData()} width="100px" setSelectValue={setInfoMonth} />{/** sel_month1 */}
-							<div className='py-2 px-2' >월</div>
-							<CommonSelect data={dayDatas} width="100px" setSelectValue={setInfoDay} />{/** sel_day1 */}
-							<div className='py-2 px-2' >일</div>
+							<Controller
+								name='selYear1'
+								control={control}
+								rules={{ required: true }}
+								render={({field , field: {onChange}}) => (
+									<CommonSelect {...field} width='100px' data={yearData()} handleChange={onChange} setSelectValue={setInfoYear} />
+								)}
+							/>
+							<div className='p-2' >년</div>
+							<Controller
+								name='selMonth1'
+								control={control}
+								rules={{ required: true }}
+								render={({field , field: {onChange}}) => (
+									<CommonSelect {...field} width='100px' data={monthData()} handleChange={onChange} setSelectValue={setInfoMonth} />
+								)}
+							/>
+							<div className='p-2' >월</div>
+							<Controller
+								name='selDay1'
+								control={control}
+								rules={{ required: true }}
+								render={({field , field: {onChange}}) => (
+									<CommonSelect {...field} width='100px' data={dayDatas} handleChange={onChange} setSelectValue={setInfoDay} />
+								)}
+							/>
+							<div className='p-2' >일</div>
 						</div>
 					</S.Cont>
 				</div>
@@ -263,14 +327,29 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<label htmlFor="parentNm" className="compulsory">보호자 이름</label>
 							</S.Tit>
 							<S.Cont className='col-2'>
-								<S.InputJo type="text" id="parentNm" name="parentNm" placeholder="홍길동" alt="이름" />
+								<Controller
+									name='parentNm'
+									control={control}
+									render={({field , field: {onChange}}) => (
+										<S.InputJo {...field} type="text" onChange={onChange} id="parentNm" placeholder="홍길동" alt="이름" />
+									)}
+								/>
 							</S.Cont>
 							<S.RadioWrap className="col-7 inputWrap">
-								<input type="radio" name="sex" id="gender2_1" value="M" checked={true} />
-								<label htmlFor="gender2_1">남</label>
-								
-								<input type="radio" name="sex" id="gender2_2" value="F" />
-								<label htmlFor="gender2_2">여</label>
+								<Controller
+									name='gender2'
+									control={control}
+									rules={{ required: true }}
+									render={({field , field: {onChange}}) => (
+										<>
+											<input {...field} type="radio" onChange={onChange} id="gender2_1" value="M" />
+											<label htmlFor="gender2_1">남</label>
+											
+											<input {...field} type="radio" onChange={onChange} id="gender2_2" value="F" />
+											<label htmlFor="gender2_2">여</label>
+										</>
+									)}
+								/>
 							</S.RadioWrap>
 						</div>
 						<div className='row'>
@@ -280,12 +359,33 @@ const Info = ({className}:{className:string}):ReactNode => {
 							</S.Tit>
 							<S.Cont className='col-9'>
 								<div className='d-flex' id="sel_year2" >
-									<CommonSelect data={yearData()} width="100px" setSelectValue={setInfoYear2} />{/** sel_year2 */}
-									<div className='py-2 px-2' >년</div>
-									<CommonSelect data={monthData()} width="100px" setSelectValue={setInfoMonth2} />{/** sel_month2 */}
-									<div className='py-2 px-2' >월</div>
-									<CommonSelect data={dayDatas2} width="100px" setSelectValue={setInfoDay2} />{/** sel_day2 */}
-									<div className='py-2 px-2' >일</div>
+								<Controller
+									name='selYear2'
+									control={control}
+									rules={{ required: true }}
+									render={({field , field: {onChange}}) => (
+										<CommonSelect {...field} width='100px' data={yearData()} handleChange={onChange} setSelectValue={setInfoYear2} />
+									)}
+								/>
+								<div className='p-2' >년</div>
+								<Controller
+									name='selMonth2'
+									control={control}
+									rules={{ required: true }}
+									render={({field , field: {onChange}}) => (
+										<CommonSelect {...field} width='100px' data={monthData()} handleChange={onChange} setSelectValue={setInfoMonth2} />
+									)}
+								/>
+								<div className='p-2' >월</div>
+								<Controller
+									name='selDay2'
+									control={control}
+									rules={{ required: true }}
+									render={({field , field: {onChange}}) => (
+										<CommonSelect {...field} width='100px' data={dayDatas2} handleChange={onChange} setSelectValue={setInfoDay2} />
+									)}
+								/>
+								<div className='p-2' >일</div>
 								</div>
 							</S.Cont>
 						</div>
@@ -298,9 +398,23 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<div className='d-flex' >
 									<span className='py-2' id="parentCelNum1" >010</span>
 									<span className='py-2 px-1'>-</span>
-									<S.InputJo type="text" className='mx-1' maxLength={4} id="parentCelNum2" name="parentCelNum2" alt="휴대폰 번호" />
+									<Controller
+										name='parentCelNum2'
+										control={control}
+										rules={{ required: true, maxLength: 4 }}
+										render={({field , field: {onChange}}) => (
+											<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+										)}
+									/>
 									<span className='py-2 px-1'>-</span>
-									<S.InputJo type="text" className='mx-1' maxLength={4} id="parentCelNum3" name="parentCelNum3" alt="휴대폰 번호" />
+									<Controller
+										name='parentCelNum3'
+										control={control}
+										rules={{ required: true, maxLength: 4 }}
+										render={({field , field: {onChange}}) => (
+											<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+										)}
+									/>
 								</div>
 							</S.Cont>
 						</div>
@@ -312,7 +426,14 @@ const Info = ({className}:{className:string}):ReactNode => {
 						<label htmlFor="mj_id" className="compulsory">아이디</label>
 					</S.Tit>
 					<S.Cont className='col-9'>
-						<S.InputJo type="text" id="memId" name="memId" alt="아이디" />{/**onBlur={() => {}} idCheck(); */}
+						<Controller
+							name='memId'
+							control={control}
+							rules={{ required: true }}
+							render={({field , field: {onChange}}) => (
+								<S.InputJo {...field} type="text" onChange={onChange} id="memId" alt="아이디" />
+							)}
+						/>{/**onBlur={() => {}} idCheck(); */}
 					</S.Cont>
 				</div>
 				<div className='row'>
@@ -322,7 +443,14 @@ const Info = ({className}:{className:string}):ReactNode => {
 					</S.Tit>
 					<S.Cont className='col-9'>
 						<div className='d-flex'>
-							<S.InputJo type="password" id="memPwd" name="memPwd" alt="비밀번호" maxLength={15} />
+							<Controller
+								name='memPwd'
+								control={control}
+								rules={{ required: true, maxLength:15 }}
+								render={({field , field: {onChange}}) => (
+									<S.InputJo {...field} type="password" onChange={onChange} id="memPwd" alt="비밀번호" />
+								)}
+							/>
 							<S.NotiTxt className='p-2' >비밀번호는 영문, 숫자만 사용할 수 있습니다. (6~15자)</S.NotiTxt>
 						</div>
 					</S.Cont>
@@ -334,7 +462,14 @@ const Info = ({className}:{className:string}):ReactNode => {
 					</S.Tit>
 					<S.Cont className='col-9'>
 						<div className='d-flex'>
-							<S.InputJo type="password" id="memPwdConfirm" name="memPwdConfirm" alt="비밀번호" maxLength={15} />
+							<Controller
+								name='memPwdConfirm'
+								control={control}
+								rules={{ required: true, maxLength:15 }}
+								render={({field , field: {onChange}}) => (
+									<S.InputJo {...field} type="password" onChange={onChange} id="memPwdConfirm" alt="비밀번호" />
+								)}
+							/>
 							<S.NotiTxt className='p-2' >한번 더 입력해주세요.</S.NotiTxt>
 						</div>
 					</S.Cont>
