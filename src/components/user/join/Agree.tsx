@@ -1,12 +1,14 @@
 "use client"
 
-import React, { ChangeEvent, ReactNode, useContext } from 'react';
+import React, { ChangeEvent, ReactNode, useContext, useState } from 'react';
 import * as S from '@/styles/user/join/UserAgree.styled';
 import { TabContext } from '@/context/TabProvider';
 import { useForm, useWatch, Controller } from 'react-hook-form';
+import CommonModal from '@/components/common/Modal';
 
 const Agree = ({className}:{className:string}):ReactNode => {
   const { tab, setTab } = useContext(TabContext);
+  const [ modalShow, setModalShow ] = useState<boolean>(false);
   
   const form = useForm({
     defaultValues: {
@@ -32,9 +34,12 @@ const Agree = ({className}:{className:string}):ReactNode => {
   
     const goNextPage = () => {
       const { memAgrAll, memAgr1, memAgr2 } = getValues();
-      setTab('info');
-      console.log('Agree page', tab);
-      console.log(memAgrAll, memAgr1, memAgr2);
+      
+      if ( memAgrAll ) {
+        setTab('info');
+      } else {
+        setModalShow(true);
+      }
 
     };
 
@@ -425,6 +430,15 @@ const Agree = ({className}:{className:string}):ReactNode => {
             <S.AgreeButton onClick={()=>{history.back();}}>동의하지 않음</S.AgreeButton>
           </S.AgreeButtonWrapBox>
         </S.AgreeContainer>
+        <CommonModal 
+          sise="sm"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          show={modalShow} 
+          onHide={() => setModalShow(false)} 
+          bodyContent={<p> 이용약관에 동의하셔야 합니다. </p>}
+          closeLabel='확인'
+        />
     </>;
 }
 
