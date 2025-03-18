@@ -1,9 +1,16 @@
 "use client"
 
-import { SelectData } from "@/app/types/common/select";
+import { ISelectData } from "@/app/types/common/select";
 import React, { ChangeEvent, ReactNode } from "react";
-import { ActionMeta, SingleValue, StylesConfig } from "react-select";
-import Select from "react-select";
+import { StylesConfig } from "react-select";
+import dynamic from "next/dynamic";
+
+const Select = dynamic(() => import("react-select"), { ssr: false });
+
+type SelectData = {
+    value : string,
+    label : string
+}
 
 const CommonSelect = ({
     data,
@@ -11,13 +18,13 @@ const CommonSelect = ({
     setSelectValue,
     handleChange, 
 }:{
-    data: SelectData[],
+    data: ISelectData[],
     width?: string,
-    setSelectValue: React.Dispatch<React.SetStateAction<SelectData>>,
+    setSelectValue: React.Dispatch<React.SetStateAction<ISelectData>>,
     handleChange?: ((e:ChangeEvent<HTMLInputElement>) => void) | undefined,
 }):ReactNode => {
-    const customStyles: StylesConfig<SelectData> = {
-        control: (provided) => ({
+    const customStyles: StylesConfig = {
+        control: (provided, state) => ({
           ...provided,
           width,
           backgroundColor: "white",
@@ -41,9 +48,12 @@ const CommonSelect = ({
             ...provided,
             width,
         }),
-      };
+        clearIndicator: (base) => ({
+            ...base,
+        }),
+    };
 
-      const onChange = (e: any) => {
+    const onChange = (e: any) => {
         console.log('ComSelect-handleChange');
         setSelectValue(e);
         if (handleChange) handleChange(e);
@@ -53,7 +63,7 @@ const CommonSelect = ({
         options={data}
         isMulti={false}
         onChange={onChange}
-        styles= {customStyles}
+        styles={customStyles}
         defaultValue={data[0]}
     />;
 }

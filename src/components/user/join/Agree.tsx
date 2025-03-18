@@ -437,7 +437,7 @@ const Agree = ({className}:{className:string}):ReactNode => {
           aria-labelledby="contained-modal-title-vcenter"
           centered
           show={modalShow} 
-          onHide={() => setModalShow(false)} 
+          onHide={() => { setModalShow(false); }} 
           bodyContent={<p className='p-3 fw-bold' > 이용약관에 동의하셔야 합니다. </p>}
           closeLabel='확인'
         />

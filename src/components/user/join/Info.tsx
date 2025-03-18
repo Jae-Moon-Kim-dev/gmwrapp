@@ -2,26 +2,30 @@
 
 import CommonSelect from '@/components/common/Select';
 import Image from 'next/image';
-import React, { ChangeEvent, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import * as S from '@/styles/user/join/UserInfo.styled';
-import { SelectData } from '@/app/types/common/select';
+import { ISelectData } from '@/app/types/common/select';
 import dayjs from 'dayjs';
 import { TabContext } from '@/context/TabProvider';
-import { Controller, useForm } from 'react-hook-form';
+import { appendErrors, Controller, FieldErrors, useForm } from 'react-hook-form';
+import useDay from '@/hooks/user/useDay';
+import CommonModal from '@/components/common/Modal';
 
 const Info = ({className}:{className:string}):ReactNode => {
 	const { setTab } = useContext(TabContext);
 
-	const [infoEmail, setInfoEmail] = useState<SelectData>({ label: '직접 입력', value: ''});
-	const [infoYear, setInfoYear] = useState<SelectData>({ label: '년도', value: '' });
-	const [infoMonth, setInfoMonth] = useState<SelectData>({ label: '월', value: '' });
-	const [infoDay, setInfoDay] = useState<SelectData>({ label: '일', value: '' });
-	const [infoYear2, setInfoYear2] = useState<SelectData>({ label: '년도', value: '' });
-	const [infoMonth2, setInfoMonth2] = useState<SelectData>({ label: '월', value: '' });
-	const [infoDay2, setInfoDay2] = useState<SelectData>({ label: '일', value: '' });
-	const [dayDatas, setDayDatas] = useState<SelectData[]>([{ label: '일', value: '' }]);
-	const [dayDatas2, setDayDatas2] = useState<SelectData[]>([{ label: '일', value: '' }]);
+	const [modalShow, setModalShow] = useState<boolean>(true);
+	const [infoEmail, setInfoEmail] = useState<ISelectData>({ label: '직접 입력', value: ''});
+	const [infoYear, setInfoYear] = useState<ISelectData>({ label: '년도', value: '' });
+	const [infoMonth, setInfoMonth] = useState<ISelectData>({ label: '월', value: '' });
+	const [infoDay, setInfoDay] = useState<ISelectData>({ label: '일', value: '' });
+	const [infoYear2, setInfoYear2] = useState<ISelectData>({ label: '년도', value: '' });
+	const [infoMonth2, setInfoMonth2] = useState<ISelectData>({ label: '월', value: '' });
+	const [infoDay2, setInfoDay2] = useState<ISelectData>({ label: '일', value: '' });
 
+	const dayDatas = useDay({year: infoYear.value, month: infoMonth.value});
+	const dayDatas2 = useDay({year: infoYear2.value, month: infoMonth2.value});
+	
 	const form = useForm({
 		defaultValues: {
 			memName: '',
@@ -49,12 +53,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 		}
 	  });
 
-	const { control, trigger, setValue, getValues } = form;
+	const { control, trigger, setValue, getValues, formState: { errors,  } } = form;
 
 	const goNextPage = async () => {
-		const { memName, gender1 } = getValues();
-		console.log('memName', memName, await trigger('memName'));
-		console.log('gender1', gender1, await trigger('gender1'));
+		await trigger();
+		setModalShow(true);
 		// setTab('complete');
 	}
 
@@ -68,87 +71,43 @@ const Info = ({className}:{className:string}):ReactNode => {
 	];
 
 	const yearData = () => {
-		let years:SelectData[] = [{ label: '년도', value: '' }];
-		if ( typeof window !== 'undefined' ) {
-			const nowDate = dayjs();
-			for ( let i=nowDate.year(); i >= (nowDate.year()-110); i-- )
-			{
-				years = [
-					...years,
-					{ label: `${i}`, value: `${i}` },
-				];
-			}
+		let years:ISelectData[] = [{ label: '년도', value: '' }];
+		const nowDate = dayjs();
+		for ( let i=nowDate.year(); i >= (nowDate.year()-110); i-- )
+		{
+			years = [
+				...years,
+				{ label: `${i}`, value: `${i}` },
+			];
 		}
 
 		return years;
 	}
 
 	const monthData = () => {
-		let months:SelectData[] = [{ label: '월', value: '' }];
-		if ( typeof window !== 'undefined' ) {
-			for ( let i=1; i <= 12; i++ )
-			{
-				months = [
-					...months,
-					{ label: `${i}`, value: `${i}` },
-				];
-			}
+		let months:ISelectData[] = [{ label: '월', value: '' }];
+		for ( let i=1; i <= 12; i++ )
+		{
+			months = [
+				...months,
+				{ label: `${i}`, value: `${i}` },
+			];
 		}
 
 		return months;
 	}
 
-	const dayData = () => {
-		const selectDate = dayjs(`${infoYear.value}-${infoMonth.value}-01`);
-		const lastDay = selectDate.daysInMonth();
-		let days:SelectData[] = [{ label: '일', value: '' }];
-
-		for ( let i=1; i <= lastDay; i++ )
-			{
-				days = [
-					...days,
-					{ label: `${i}`, value: `${i}` },
-				];
-			}
-		
-		setDayDatas(days);
-	}
-
-	const dayData2 = () => {
-		const selectDate = dayjs(`${infoYear2.value}-${infoMonth2.value}-01`);
-		const lastDay = selectDate.daysInMonth();
-		let days:SelectData[] = [{ label: '일', value: '' }];
-
-		for ( let i=1; i <= lastDay; i++ )
-			{
-				days = [
-					...days,
-					{ label: `${i}`, value: `${i}` },
-				];
-			}
-		
-		setDayDatas2(days);
-	}
-
-	const isYoungOld = ():boolean => {
+	const isYoungOld = useCallback(():boolean => {
 		const selectDate = dayjs(`${infoYear.value}-${infoMonth.value}-${infoDay.value}`);
 		const pointDate = dayjs().subtract(14, 'year');
 	
 		if ( pointDate.isBefore(selectDate) ) return true;
 		else return false;
-	}
-
-	useEffect(() => {
-		if (infoMonth) dayData();
-	}, [infoMonth]);
-
-	useEffect(() => {
-		if (infoMonth2) dayData2();
-	}, [infoMonth2]);
+	}, [infoYear, infoMonth, infoDay]);
 
 	useEffect(() => {
 		isYoungOld();
-	}, [infoDay]);
+	}, [infoYear, infoMonth, infoDay]);
 
 	return <S.InfoContainer className={className} id="infoInput">
         <S.MiddleTitle className="sct infoInp">
@@ -172,16 +131,24 @@ const Info = ({className}:{className:string}):ReactNode => {
 						<Controller
 							name='memName'
 							control={control}
-							rules={{ required: true }}
-							render={({field , field: {onChange}}) => (
-								<S.InputJo
-									{...field}
-									type="text" 
-									id="memName" 
-									placeholder="홍길동" 
-									alt="이름"
-									onChange={onChange}
-								/>
+							rules={{ 
+								required: "이름 입력하세요.",
+								maxLength: { value: 10, message: "최대 10자를 넘을 수 없습니다." }
+							}}
+							render={({
+								field: {ref, value, onChange},
+							}) => (
+								<>
+									<S.InputJo
+										ref={ref}
+										value={value}
+										type="text" 
+										id="memName" 
+										placeholder="홍길동" 
+										alt="이름"
+										onChange={onChange}
+									/>
+								</>
 							)}
 						/>
 					</S.Cont>
@@ -189,13 +156,13 @@ const Info = ({className}:{className:string}):ReactNode => {
 						<Controller
 							name='gender1'
 							control={control}
-							rules={{ required: true }}
-							render={({field , field: {onChange}}) => (
+							rules={{ required: "...." }}
+							render={({field: {ref, name, onChange}}) => (
 								<>
-									<input {...field} type="radio" onChange={onChange} id="gender_1" value="M" />
+									<input ref={ref} name={name} type="radio" onChange={onChange} id="gender_1" value="M" />
 									<label htmlFor="gender_1">남</label>
 									
-									<input {...field} type="radio" onChange={onChange} id="gender_2" value="F" />
+									<input ref={ref} name={name} type="radio" onChange={onChange} id="gender_2" value="F" />
 									<label htmlFor="gender_2">여</label>
 								</>
 							)}
@@ -213,9 +180,9 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='mailID'
 									control={control}
-									rules={{ required: true }}
-									render={({field , field: {onChange}}) => (
-										<S.InputJo {...field} type="text" onChange={onChange} id="mailID" alt="이메일" />
+									rules={{ required: "이메일 아이디를 입력하세요." }}
+									render={({field: {ref, value, onChange}}) => (
+										<S.InputJo ref={ref} value={value} type="text" onChange={onChange} id="mailID" alt="이메일" />
 									)}
 								/>	
 								<span className='pe-1' >@</span>
@@ -479,6 +446,18 @@ const Info = ({className}:{className:string}):ReactNode => {
 		<S.InfoButtonWrapBox>
 			<S.InfoButton onClick={goNextPage} >입력 완료</S.InfoButton> {/**saveInfo(); */}
 		</S.InfoButtonWrapBox>
+		{
+			Object.values(errors).find(error => !!error) &&  
+				<CommonModal 
+					size="lg"
+					aria-labelledby="contained-modal-title-vcenter"
+					centered
+					show={modalShow}
+					onHide={() => { setModalShow(false); }}
+					bodyContent={<p className='p-3 fw-bold' >{Object.values(errors).find(error => !!error)?.message}</p>}
+					closeLabel='확인'
+				/>
+		}
     </S.InfoContainer>;
 }
 

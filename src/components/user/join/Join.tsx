@@ -33,7 +33,7 @@ const JoinMain = ():ReactNode => {
           <div id="myTabContent" className="tab-content mt-2">
             <Agree className={`tab-pane fade p-3${tab === 'agree' ? ' active show' : ''}`} />
             <Info className={`tab-pane fade p-3${tab === 'info' ? ' active show' : ''}`} />
-            <Complete className={`tab-pane fade p-3${tab === 'complete' ? ' active show' : ''}`} />
+            {/* <Complete className={`tab-pane fade p-3${tab === 'complete' ? ' active show' : ''}`} /> */}
           </div>
         </motion.div>
       </div>

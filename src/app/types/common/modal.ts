@@ -4,4 +4,5 @@ export interface ModalConfig {
     headerContent?: ReactNode, 
     bodyContent?: ReactNode,
     closeLabel?: string,
+    modalShow?: boolean,
 }

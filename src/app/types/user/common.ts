@@ -11,3 +11,12 @@ export const initTermAgree = {
     memAgr1: false,
     memAgr2: false,
 }
+
+export interface IDate {
+    year: string, 
+    month: string
+}
+
+export const initDay = [{
+    label: '일', value: '' 
+}];

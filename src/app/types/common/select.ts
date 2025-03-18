@@ -1,4 +1,5 @@
-export interface SelectData {
+export interface ISelectData {
     value : string,
     label : string
 }
+
