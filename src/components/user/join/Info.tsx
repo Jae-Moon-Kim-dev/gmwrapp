@@ -10,7 +10,7 @@ import { TabContext } from '@/context/TabProvider';
 import { Controller, FieldPath, useForm } from 'react-hook-form';
 import useDay from '@/hooks/user/useDay';
 import CommonModal from '@/components/common/Modal';
-import { InfoData } from '@/app/types/user/common';
+import { InfoData } from '@/app/types/user/user';
 
 const Info = ({className}:{className:string}):ReactNode => {
 	const { setTab } = useContext(TabContext);
@@ -266,8 +266,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 								name='selMonth1'
 								control={control}
 								rules={{ required: true }}
-								render={({field , field: {onChange}}) => (
-									<CommonSelect {...field} width='100px' data={monthData()} handleChange={onChange} setSelectValue={setInfoMonth} />
+								render={({field , field: {name, onChange}}) => (
+									<CommonSelect {...field} width='100px' data={monthData()} handleChange={(e: ISelectData) => {
+										onChange(e);
+										handleCombChange(e, name);
+									}} setSelectValue={setInfoMonth} />
 								)}
 							/>
 							<div className='p-2' >월</div>
@@ -275,8 +278,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 								name='selDay1'
 								control={control}
 								rules={{ required: true }}
-								render={({field , field: {onChange}}) => (
-									<CommonSelect {...field} width='100px' data={dayDatas} handleChange={onChange} setSelectValue={setInfoDay} />
+								render={({field , field: {name, onChange}}) => (
+									<CommonSelect {...field} width='100px' data={dayDatas} handleChange={(e: ISelectData) => {
+										onChange(e);
+										handleCombChange(e, name);
+									}} setSelectValue={setInfoDay} />
 								)}
 							/>
 							<div className='p-2' >일</div>
@@ -338,8 +344,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 									name='selYear2'
 									control={control}
 									rules={{ required: true }}
-									render={({field , field: {onChange}}) => (
-										<CommonSelect {...field} width='100px' data={yearData()} handleChange={onChange} setSelectValue={setInfoYear2} />
+									render={({field , field: {name, onChange}}) => (
+										<CommonSelect {...field} width='100px' data={yearData()} handleChange={(e: ISelectData) => {
+											onChange(e);
+											handleCombChange(e, name);
+										}} setSelectValue={setInfoYear2} />
 									)}
 								/>
 								<div className='p-2' >년</div>
@@ -347,8 +356,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 									name='selMonth2'
 									control={control}
 									rules={{ required: true }}
-									render={({field , field: {onChange}}) => (
-										<CommonSelect {...field} width='100px' data={monthData()} handleChange={onChange} setSelectValue={setInfoMonth2} />
+									render={({field , field: {name, onChange}}) => (
+										<CommonSelect {...field} width='100px' data={monthData()} handleChange={(e: ISelectData) => {
+											onChange(e);
+											handleCombChange(e, name);
+										}} setSelectValue={setInfoMonth2} />
 									)}
 								/>
 								<div className='p-2' >월</div>
@@ -356,8 +368,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 									name='selDay2'
 									control={control}
 									rules={{ required: true }}
-									render={({field , field: {onChange}}) => (
-										<CommonSelect {...field} width='100px' data={dayDatas2} handleChange={onChange} />
+									render={({field , field: {name, onChange}}) => (
+										<CommonSelect {...field} width='100px' data={dayDatas2} handleChange={(e: ISelectData) => {
+											onChange(e);
+											handleCombChange(e, name);
+										}} />
 									)}
 								/>
 								<div className='p-2' >일</div>

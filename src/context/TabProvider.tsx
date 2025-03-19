@@ -1,6 +1,6 @@
 "use client"
 
-import { initTermAgree, TabId, TermAgree } from "@/app/types/user/common";
+import { initTermAgree, TabId, TermAgree } from "@/app/types/user/user";
 import React, { createContext, ReactNode, useState } from "react"
 
 export const TabContext = createContext<{

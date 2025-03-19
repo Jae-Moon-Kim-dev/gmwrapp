@@ -5,7 +5,7 @@ import * as S from '@/styles/user/join/UserAgree.styled';
 import { TabContext } from '@/context/TabProvider';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import CommonModal from '@/components/common/Modal';
-import { initTermAgree } from '@/app/types/user/common';
+import { initTermAgree } from '@/app/types/user/user';
 
 const Agree = ({className}:{className:string}):ReactNode => {
   const { setTab, setAgree } = useContext(TabContext);

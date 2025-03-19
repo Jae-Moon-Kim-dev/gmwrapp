@@ -1,7 +1,7 @@
 "use client"
 
 import { ISelectData } from '@/app/types/common/select';
-import { IDate, initDay } from '@/app/types/user/common';
+import { IDate, initDay } from '@/app/types/user/user';
 import dayjs from 'dayjs';
 import { useState, useEffect, useCallback } from 'react';
 
