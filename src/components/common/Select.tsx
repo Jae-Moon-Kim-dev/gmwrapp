@@ -7,11 +7,6 @@ import dynamic from "next/dynamic";
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
 
-type SelectData = {
-    value : string,
-    label : string
-}
-
 const CommonSelect = ({
     data,
     width = '200px',
@@ -47,14 +42,10 @@ const CommonSelect = ({
         menu: (provided) => ({
             ...provided,
             width,
-        }),
-        clearIndicator: (base) => ({
-            ...base,
-        }),
+        })
     };
 
     const onChange = (e: any) => {
-        console.log('ComSelect-handleChange');
         setSelectValue(e);
         if (handleChange) handleChange(e);
     }

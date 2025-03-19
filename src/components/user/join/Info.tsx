@@ -53,12 +53,18 @@ const Info = ({className}:{className:string}):ReactNode => {
 		}
 	  });
 
-	const { control, trigger, setValue, getValues, formState: { errors,  } } = form;
+	const { control, trigger, setValue, getValues, formState: { errors } } = form;
 
 	const goNextPage = async () => {
+		const { selYear1 } = getValues();
+
 		await trigger();
 		setModalShow(true);
 		// setTab('complete');
+	}
+
+	const handleCombChange = (e: any, name: any):void => {
+		setValue(name, e.value);
 	}
 
 	const emailData = [
@@ -249,8 +255,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 								name='selYear1'
 								control={control}
 								rules={{ required: true }}
-								render={({field , field: {onChange}}) => (
-									<CommonSelect {...field} width='100px' data={yearData()} handleChange={onChange} setSelectValue={setInfoYear} />
+								render={({field , field: {name, onChange}}) => (
+									<CommonSelect {...field} width='100px' data={yearData()} handleChange={(e: any) => {
+										onChange(e);
+										handleCombChange(e, name);
+									}} setSelectValue={setInfoYear} />
 								)}
 							/>
 							<div className='p-2' >년</div>
