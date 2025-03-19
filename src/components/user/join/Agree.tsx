@@ -8,7 +8,7 @@ import CommonModal from '@/components/common/Modal';
 import { initTermAgree } from '@/app/types/user/common';
 
 const Agree = ({className}:{className:string}):ReactNode => {
-  const { tab, setTab, setAgree } = useContext(TabContext);
+  const { setTab, setAgree } = useContext(TabContext);
   const [ modalShow, setModalShow ] = useState<boolean>(false);
   
   const form = useForm({

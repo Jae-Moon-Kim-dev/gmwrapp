@@ -3,7 +3,7 @@
 import { ISelectData } from '@/app/types/common/select';
 import { IDate, initDay } from '@/app/types/user/common';
 import dayjs from 'dayjs';
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const useDay = (data: IDate):ISelectData[] => {
     const [days, setDays] = useState<ISelectData[]>(initDay);

@@ -3,7 +3,6 @@
 import React, { ReactNode, useContext } from 'react';
 import Agree from '@/components/user/join/Agree';
 import Info from '@/components/user/join/Info';
-import Complete from '@/components/user/join/Complete';
 import { TabContext } from '@/context/TabProvider';
 import { motion } from 'framer-motion';
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { ISelectData } from "@/app/types/common/select";
-import React, { ChangeEvent, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { StylesConfig } from "react-select";
 import dynamic from "next/dynamic";
 
@@ -15,11 +15,11 @@ const CommonSelect = ({
 }:{
     data: ISelectData[],
     width?: string,
-    setSelectValue: React.Dispatch<React.SetStateAction<ISelectData>>,
-    handleChange?: ((e:ChangeEvent<HTMLInputElement>) => void) | undefined,
+    setSelectValue?: React.Dispatch<React.SetStateAction<ISelectData>> | undefined,
+    handleChange?: ((e:ISelectData) => void) | undefined,
 }):ReactNode => {
     const customStyles: StylesConfig = {
-        control: (provided, state) => ({
+        control: (provided) => ({
           ...provided,
           width,
           backgroundColor: "white",
@@ -45,14 +45,13 @@ const CommonSelect = ({
         })
     };
 
-    const onChange = (e: any) => {
-        setSelectValue(e);
-        if (handleChange) handleChange(e);
+    const onChange = (e: unknown) => {
+        if (setSelectValue) setSelectValue(e as ISelectData);
+        if (handleChange) handleChange(e as ISelectData);
     }
 
     return <Select
         options={data}
-        isMulti={false}
         onChange={onChange}
         styles={customStyles}
         defaultValue={data[0]}

@@ -2,26 +2,25 @@
 
 import CommonSelect from '@/components/common/Select';
 import Image from 'next/image';
-import React, { ChangeEvent, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+import React, { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import * as S from '@/styles/user/join/UserInfo.styled';
 import { ISelectData } from '@/app/types/common/select';
 import dayjs from 'dayjs';
 import { TabContext } from '@/context/TabProvider';
-import { appendErrors, Controller, FieldErrors, useForm } from 'react-hook-form';
+import { Controller, FieldPath, useForm } from 'react-hook-form';
 import useDay from '@/hooks/user/useDay';
 import CommonModal from '@/components/common/Modal';
+import { InfoData } from '@/app/types/user/common';
 
 const Info = ({className}:{className:string}):ReactNode => {
 	const { setTab } = useContext(TabContext);
 
 	const [modalShow, setModalShow] = useState<boolean>(true);
-	const [infoEmail, setInfoEmail] = useState<ISelectData>({ label: '직접 입력', value: ''});
 	const [infoYear, setInfoYear] = useState<ISelectData>({ label: '년도', value: '' });
 	const [infoMonth, setInfoMonth] = useState<ISelectData>({ label: '월', value: '' });
 	const [infoDay, setInfoDay] = useState<ISelectData>({ label: '일', value: '' });
 	const [infoYear2, setInfoYear2] = useState<ISelectData>({ label: '년도', value: '' });
 	const [infoMonth2, setInfoMonth2] = useState<ISelectData>({ label: '월', value: '' });
-	const [infoDay2, setInfoDay2] = useState<ISelectData>({ label: '일', value: '' });
 
 	const dayDatas = useDay({year: infoYear.value, month: infoMonth.value});
 	const dayDatas2 = useDay({year: infoYear2.value, month: infoMonth2.value});
@@ -53,17 +52,17 @@ const Info = ({className}:{className:string}):ReactNode => {
 		}
 	  });
 
-	const { control, trigger, setValue, getValues, formState: { errors } } = form;
+	const { control, trigger, setValue, formState: { errors } } = form;
 
 	const goNextPage = async () => {
-		const { selYear1 } = getValues();
+		// const { selYear1 } = getValues();
 
 		await trigger();
 		setModalShow(true);
-		// setTab('complete');
+		setTab('complete');
 	}
 
-	const handleCombChange = (e: any, name: any):void => {
+	const handleCombChange = (e: ISelectData, name: FieldPath<InfoData>):void => {
 		setValue(name, e.value);
 	}
 
@@ -208,7 +207,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 									control={control}
 									rules={{ required: true }}
 									render={({field , field: {onChange}}) => (
-										<CommonSelect {...field} data={emailData} handleChange={onChange} setSelectValue={setInfoEmail} />
+										<CommonSelect {...field} data={emailData} handleChange={onChange} />
 									)}
 								/>
 							</div>
@@ -256,7 +255,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 								control={control}
 								rules={{ required: true }}
 								render={({field , field: {name, onChange}}) => (
-									<CommonSelect {...field} width='100px' data={yearData()} handleChange={(e: any) => {
+									<CommonSelect {...field} width='100px' data={yearData()} handleChange={(e: ISelectData) => {
 										onChange(e);
 										handleCombChange(e, name);
 									}} setSelectValue={setInfoYear} />
@@ -358,7 +357,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 									control={control}
 									rules={{ required: true }}
 									render={({field , field: {onChange}}) => (
-										<CommonSelect {...field} width='100px' data={dayDatas2} handleChange={onChange} setSelectValue={setInfoDay2} />
+										<CommonSelect {...field} width='100px' data={dayDatas2} handleChange={onChange} />
 									)}
 								/>
 								<div className='p-2' >일</div>
