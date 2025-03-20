@@ -7,10 +7,10 @@ import * as S from '@/styles/user/join/UserInfo.styled';
 import { ISelectData } from '@/app/types/common/select';
 import dayjs from 'dayjs';
 import { TabContext } from '@/context/TabProvider';
-import { Controller, FieldPath, useForm } from 'react-hook-form';
+import { Controller, FieldPath, useForm, useWatch } from 'react-hook-form';
 import useDay from '@/hooks/user/useDay';
 import CommonModal from '@/components/common/Modal';
-import { InfoData } from '@/app/types/user/user';
+import { InfoData, initInfoData } from '@/app/types/user/user';
 
 const Info = ({className}:{className:string}):ReactNode => {
 	const { setTab } = useContext(TabContext);
@@ -21,42 +21,34 @@ const Info = ({className}:{className:string}):ReactNode => {
 	const [infoDay, setInfoDay] = useState<ISelectData>({ label: '일', value: '' });
 	const [infoYear2, setInfoYear2] = useState<ISelectData>({ label: '년도', value: '' });
 	const [infoMonth2, setInfoMonth2] = useState<ISelectData>({ label: '월', value: '' });
-
+	
 	const dayDatas = useDay({year: infoYear.value, month: infoMonth.value});
 	const dayDatas2 = useDay({year: infoYear2.value, month: infoMonth2.value});
 	
 	const form = useForm({
-		defaultValues: {
-			memName: '',
-			gender1: 'M',
-			mailID: '',
-			mailAddr: '',
-			selMailAddr: '',
-			celNum1: '',
-			celNum2: '',
-			celNum3: '',
-			selYear1: '',
-			selMonth1: '',
-			selDay1: '',
-			parentNm: '',
-			gender2: '',
-			selYear2: '',
-			selMonth2: '',
-			selDay2: '',
-			parentCelNum1: '',
-			parentCelNum2: '',
-			parentCelNum3: '',
-			memId: '',
-			memPwd: '',
-			memPwdConfirm: '',
-		}
+		defaultValues: initInfoData
 	  });
 
-	const { control, trigger, setValue, formState: { errors } } = form;
+	const { control, trigger, setValue, getValues, formState: { errors }, clearErrors, reset } = form;
+	const gender1 = useWatch({
+		control,
+		name: 'gender1',
+	});
+	const gender2 = useWatch({
+		control,
+		name: 'gender2',
+	});
+	const selMailAddr = useWatch({
+		control,
+		name: 'selMailAddr',
+	});
+	const memPwd = useWatch({
+		control,
+		name: 'memPwd',
+	});
 
 	const goNextPage = async () => {
-		// const { selYear1 } = getValues();
-
+		clearErrors();
 		await trigger();
 		setModalShow(true);
 		setTab('complete');
@@ -64,6 +56,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 
 	const handleCombChange = (e: ISelectData, name: FieldPath<InfoData>):void => {
 		setValue(name, e.value);
+	}
+
+	const handleNumberOnly = (e: React.KeyboardEvent<HTMLInputElement>, name: FieldPath<InfoData>) => {
+		e.currentTarget.value = e.currentTarget.value.replace(/[^0-9]/g, '');
+		setValue(name, e.currentTarget.value);
 	}
 
 	const emailData = [
@@ -106,13 +103,31 @@ const Info = ({className}:{className:string}):ReactNode => {
 		const selectDate = dayjs(`${infoYear.value}-${infoMonth.value}-${infoDay.value}`);
 		const pointDate = dayjs().subtract(14, 'year');
 	
-		if ( pointDate.isBefore(selectDate) ) return true;
-		else return false;
+		if ( pointDate.isBefore(selectDate) ) {
+			return true;
+		} else {
+			return false;
+		}
 	}, [infoYear, infoMonth, infoDay]);
 
 	useEffect(() => {
 		isYoungOld();
 	}, [infoYear, infoMonth, infoDay]);
+
+	useEffect(() => {
+		if ( !isYoungOld() ) {
+			reset({
+				parentNm: "",
+				gender2: "M",
+				selYear2: "",
+				selMonth2: "",
+				selDay2: "",
+				parentCelNum1: "010",
+				parentCelNum2: "",
+				parentCelNum3: "",
+			});
+		}
+	}, [isYoungOld, reset]);
 
 	return <S.InfoContainer className={className} id="infoInput">
         <S.MiddleTitle className="sct infoInp">
@@ -138,7 +153,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 							control={control}
 							rules={{ 
 								required: "이름 입력하세요.",
-								maxLength: { value: 10, message: "최대 10자를 넘을 수 없습니다." }
+								maxLength: { value: 10, message: "최대 10글자 이하로 입력해 주세요." }
 							}}
 							render={({
 								field: {ref, value, onChange},
@@ -161,13 +176,12 @@ const Info = ({className}:{className:string}):ReactNode => {
 						<Controller
 							name='gender1'
 							control={control}
-							rules={{ required: "...." }}
 							render={({field: {ref, name, onChange}}) => (
 								<>
-									<input ref={ref} name={name} type="radio" onChange={onChange} id="gender_1" value="M" />
+									<input ref={ref} name={name} type="radio" checked={ gender1 === 'M' } onChange={onChange} id="gender_1" value="M" />
 									<label htmlFor="gender_1">남</label>
 									
-									<input ref={ref} name={name} type="radio" onChange={onChange} id="gender_2" value="F" />
+									<input ref={ref} name={name} type="radio" checked={ gender1 === 'F' } onChange={onChange} id="gender_2" value="F" />
 									<label htmlFor="gender_2">여</label>
 								</>
 							)}
@@ -185,7 +199,10 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='mailID'
 									control={control}
-									rules={{ required: "이메일 아이디를 입력하세요." }}
+									rules={{ 
+										required: "이메일 아이디를 입력하세요." ,
+										maxLength: { value: 20, message: "최대 20글자 이하로 입력해 주세요." }
+									}}
 									render={({field: {ref, value, onChange}}) => (
 										<S.InputJo ref={ref} value={value} type="text" onChange={onChange} id="mailID" alt="이메일" />
 									)}
@@ -194,9 +211,9 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='mailAddr'
 									control={control}
-									rules={{ required: true }}
+									rules={{ required: "이메일 주소를 입력하세요."}}
 									render={({field , field: {onChange}}) => (
-										<S.InputJo {...field} type="text" onChange={onChange} className='pe-1' id="mailAddr" alt="이메일" />
+										<S.InputJo {...field} type="text" onChange={onChange} disabled={!!selMailAddr} className='pe-1' id="mailAddr" alt="이메일" />
 									)}
 								/>
 
@@ -205,9 +222,12 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='selMailAddr'
 									control={control}
-									rules={{ required: true }}
-									render={({field , field: {onChange}}) => (
-										<CommonSelect {...field} data={emailData} handleChange={onChange} />
+									render={({field , field: {name, onChange}}) => (
+										<CommonSelect {...field} data={emailData} handleChange={(e: ISelectData) => {
+											onChange(e);
+											handleCombChange(e, name);
+											setValue('mailAddr', e.value);
+										}} />
 									)}
 								/>
 							</div>
@@ -226,18 +246,18 @@ const Info = ({className}:{className:string}):ReactNode => {
 							<Controller
 								name='celNum2'
 								control={control}
-								rules={{ required: true, maxLength: 4 }}
-								render={({field , field: {onChange}}) => (
-									<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+								rules={{ required: "휴대폰 번호를 입력하세요." }}
+								render={({field , field: {name, onChange}}) => (
+									<S.InputJo {...field} type="text" onKeyUp={(e) => handleNumberOnly(e, name)} onKeyDown={(e) => handleNumberOnly(e, name)} onChange={onChange} maxLength={4} className='mx-1' alt="휴대폰 번호" />
 								)}
 							/>
 							<span className='py-2 px-1'>-</span>
 							<Controller
 								name='celNum3'
 								control={control}
-								rules={{ required: true, maxLength: 4 }}
-								render={({field , field: {onChange}}) => (
-									<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+								rules={{ required: "휴대폰 번호를 입력하세요." }}
+								render={({field , field: {name, onChange}}) => (
+									<S.InputJo {...field} type="text" onKeyUp={(e) => handleNumberOnly(e, name)} onKeyDown={(e) => handleNumberOnly(e, name)} onChange={onChange} maxLength={4} className='mx-1' alt="휴대폰 번호" />
 								)}
 							/>
 						</div>
@@ -253,7 +273,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 							<Controller
 								name='selYear1'
 								control={control}
-								rules={{ required: true }}
+								rules={{ required: "생년월일을 입력해 주세요." }}
 								render={({field , field: {name, onChange}}) => (
 									<CommonSelect {...field} width='100px' data={yearData()} handleChange={(e: ISelectData) => {
 										onChange(e);
@@ -265,7 +285,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 							<Controller
 								name='selMonth1'
 								control={control}
-								rules={{ required: true }}
+								rules={{ required: "생년월일을 입력해 주세요." }}
 								render={({field , field: {name, onChange}}) => (
 									<CommonSelect {...field} width='100px' data={monthData()} handleChange={(e: ISelectData) => {
 										onChange(e);
@@ -277,7 +297,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 							<Controller
 								name='selDay1'
 								control={control}
-								rules={{ required: true }}
+								rules={{ required: "생년월일을 입력해 주세요." }}
 								render={({field , field: {name, onChange}}) => (
 									<CommonSelect {...field} width='100px' data={dayDatas} handleChange={(e: ISelectData) => {
 										onChange(e);
@@ -311,6 +331,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='parentNm'
 									control={control}
+									rules={{ required: isYoungOld() ? '보호자 이름 입력하세요.' : false }}
 									render={({field , field: {onChange}}) => (
 										<S.InputJo {...field} type="text" onChange={onChange} id="parentNm" placeholder="홍길동" alt="이름" />
 									)}
@@ -320,13 +341,12 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='gender2'
 									control={control}
-									rules={{ required: true }}
 									render={({field , field: {onChange}}) => (
 										<>
-											<input {...field} type="radio" onChange={onChange} id="gender2_1" value="M" />
+											<input {...field} type="radio" onChange={onChange} checked={ gender2 === 'M' } id="gender2_1" value="M" />
 											<label htmlFor="gender2_1">남</label>
 											
-											<input {...field} type="radio" onChange={onChange} id="gender2_2" value="F" />
+											<input {...field} type="radio" onChange={onChange} checked={ gender2 === 'F' } id="gender2_2" value="F" />
 											<label htmlFor="gender2_2">여</label>
 										</>
 									)}
@@ -343,7 +363,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='selYear2'
 									control={control}
-									rules={{ required: true }}
+									rules={{ required: isYoungOld() ? '보호자 생년월일을 입력해 주세요.' : false }}
 									render={({field , field: {name, onChange}}) => (
 										<CommonSelect {...field} width='100px' data={yearData()} handleChange={(e: ISelectData) => {
 											onChange(e);
@@ -355,7 +375,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='selMonth2'
 									control={control}
-									rules={{ required: true }}
+									rules={{ required: isYoungOld() ? '보호자 생년월일을 입력해 주세요.' : false }}
 									render={({field , field: {name, onChange}}) => (
 										<CommonSelect {...field} width='100px' data={monthData()} handleChange={(e: ISelectData) => {
 											onChange(e);
@@ -367,7 +387,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 								<Controller
 									name='selDay2'
 									control={control}
-									rules={{ required: true }}
+									rules={{ required: isYoungOld() ? '보호자 생년월일을 입력해 주세요.' : false }}
 									render={({field , field: {name, onChange}}) => (
 										<CommonSelect {...field} width='100px' data={dayDatas2} handleChange={(e: ISelectData) => {
 											onChange(e);
@@ -391,18 +411,18 @@ const Info = ({className}:{className:string}):ReactNode => {
 									<Controller
 										name='parentCelNum2'
 										control={control}
-										rules={{ required: true, maxLength: 4 }}
-										render={({field , field: {onChange}}) => (
-											<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+										rules={{ required: isYoungOld() ? '보호자 휴대폰 번호를 입력하세요.' : false }}
+										render={({field , field: {name, onChange}}) => (
+											<S.InputJo {...field} type="text" onChange={onChange} onKeyUp={(e) => handleNumberOnly(e, name)} onKeyDown={(e) => handleNumberOnly(e, name)} maxLength={4} className='mx-1' alt="휴대폰 번호" />
 										)}
 									/>
 									<span className='py-2 px-1'>-</span>
 									<Controller
 										name='parentCelNum3'
 										control={control}
-										rules={{ required: true, maxLength: 4 }}
-										render={({field , field: {onChange}}) => (
-											<S.InputJo {...field} type="text" onChange={onChange} className='mx-1' alt="휴대폰 번호" />
+										rules={{ required: isYoungOld() ? '보호자 휴대폰 번호를 입력하세요.' : false }}
+										render={({field , field: {name, onChange}}) => (
+											<S.InputJo {...field} type="text" onChange={onChange} onKeyUp={(e) => handleNumberOnly(e, name)} onKeyDown={(e) => handleNumberOnly(e, name)} maxLength={4} className='mx-1' alt="휴대폰 번호" />
 										)}
 									/>
 								</div>
@@ -419,7 +439,15 @@ const Info = ({className}:{className:string}):ReactNode => {
 						<Controller
 							name='memId'
 							control={control}
-							rules={{ required: true }}
+							rules={{ 
+								required: "아이디를 입력해 주세요.",
+								minLength: { value: 6, message: "아이디는 최소 6글자 이상 25글자 이하로 입력하세요." },
+								maxLength: { value: 25, message: "아이디는 최소 6글자 이상 25글자 이하로 입력하세요." },
+								validate: {
+									hasFirstEng: value => /(^[a-zA-Z])/.test(value) || "아이디의 첫글자는 영문이어야 합니다.",
+									hasEngNumber: value => /^([a-zA-Z0-9-_])+$/.test(value) || "아이디는 영문, 숫자, -, _ 만 사용할 수 있습니다.",
+								}
+							}}
 							render={({field , field: {onChange}}) => (
 								<S.InputJo {...field} type="text" onChange={onChange} id="memId" alt="아이디" />
 							)}
@@ -436,7 +464,11 @@ const Info = ({className}:{className:string}):ReactNode => {
 							<Controller
 								name='memPwd'
 								control={control}
-								rules={{ required: true, maxLength:15 }}
+								rules={{ 
+									required: "비밀번호를 입력해 주세요.",
+									minLength: { value: 6, message: "비밀번호는 최소 6글자 이상 15글자 이하로 입력하세요." },
+									maxLength: { value: 15, message: "비밀번호는 최소 6글자 이상 15글자 이하로 입력하세요." }
+								}}
 								render={({field , field: {onChange}}) => (
 									<S.InputJo {...field} type="password" onChange={onChange} id="memPwd" alt="비밀번호" />
 								)}
@@ -455,7 +487,12 @@ const Info = ({className}:{className:string}):ReactNode => {
 							<Controller
 								name='memPwdConfirm'
 								control={control}
-								rules={{ required: true, maxLength:15 }}
+								rules={{ 
+									required: "비밀번호를 한번더 입력해 주세요.",
+									minLength: { value: 6, message: "비밀번호는 최소 6글자 이상 15글자 이하로 입력하세요." },
+									maxLength: { value: 15, message: "비밀번호는 최소 6글자 이상 15글자 이하로 입력하세요." },
+									validate: value => value === memPwd || "비밀번호가 일치하지 않습니다."
+								}}
 								render={({field , field: {onChange}}) => (
 									<S.InputJo {...field} type="password" onChange={onChange} id="memPwdConfirm" alt="비밀번호" />
 								)}

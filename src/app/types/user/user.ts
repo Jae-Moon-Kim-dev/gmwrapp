@@ -45,3 +45,28 @@ export type InfoData = {
     memPwd: string,
     memPwdConfirm: string,
 }
+
+export const initInfoData = {
+    memName: '',
+    gender1: 'M',
+    mailID: '',
+    mailAddr: '',
+    selMailAddr: '',
+    celNum1: '010',
+    celNum2: '',
+    celNum3: '',
+    selYear1: '',
+    selMonth1: '',
+    selDay1: '',
+    parentNm: '',
+    gender2: 'M',
+    selYear2: '',
+    selMonth2: '',
+    selDay2: '',
+    parentCelNum1: '010',
+    parentCelNum2: '',
+    parentCelNum3: '',
+    memId: '',
+    memPwd: '',
+    memPwdConfirm: '',
+};

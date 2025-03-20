@@ -46,6 +46,9 @@ export const InputJo = styled.input`
     padding: 0 10px;
     margin: 1px 5px 5px 0;
     background: #fff;
+    &:disabled {
+        background-color: var(--bs-secondary-bg);
+    }
 `;
 
 export const RadioWrap = styled.div`
