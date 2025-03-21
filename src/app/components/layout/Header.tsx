@@ -14,11 +14,9 @@ const Header = () => {
             </button>
             <div className="collapse navbar-collapse" id="navbarColor03">
                 <ul className="navbar-nav ms-md-auto">
-                    <li className="nav-item">
-                        <a className="nav-link active" href="#">Home
-                            <span className="visually-hidden">(current)</span>
-                        </a>
-                    </li>
+                    <Link className='nav-link active' href="/">Home
+                        <span className="visually-hidden">(current)</span>
+                    </Link>
                     <li className="nav-item dropdown">
                         <Link href="/info/prayerhouse">
                             <span className="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">교회소개</span>
@@ -74,6 +72,10 @@ const Header = () => {
                 |
                 <Link href="/user/join">
                     <button type="button" className="btn btn-link">회원가입</button>
+                </Link>
+                |
+                <Link href="/admin/menu">
+                    <button type="button" className="btn btn-link">운영모드</button>
                 </Link>
             </div>
         </div>

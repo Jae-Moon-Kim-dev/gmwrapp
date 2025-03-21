@@ -29,7 +29,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 		defaultValues: initInfoData
 	  });
 
-	const { control, trigger, setValue, getValues, formState: { errors }, clearErrors, reset } = form;
+	const { control, trigger, setValue, formState: { errors }, clearErrors, reset } = form;
 	const gender1 = useWatch({
 		control,
 		name: 'gender1',
@@ -112,7 +112,7 @@ const Info = ({className}:{className:string}):ReactNode => {
 
 	useEffect(() => {
 		isYoungOld();
-	}, [infoYear, infoMonth, infoDay]);
+	}, [infoYear, infoMonth, infoDay, isYoungOld]);
 
 	useEffect(() => {
 		if ( !isYoungOld() ) {
