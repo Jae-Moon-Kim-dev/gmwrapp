@@ -2,7 +2,9 @@
 import { motion } from 'framer-motion';
 import { Board, BoardApiData } from '@/app/types/prayerhouse/prayerHouse';
 import { ColumnDef } from '@tanstack/react-table';
-import Table from '@/components/common/Table';
+import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
+import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import Box from '@mui/material/Box';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -79,7 +81,27 @@ const Menu = () => {
           <li className="breadcrumb-item active">메뉴 관리</li>
         </ol>
         <hr/>
-        <Table<Board> columns={columns} data={board} />
+        <div>
+        <Box sx={{ minHeight: 352, minWidth: 250 }}>
+          <SimpleTreeView>
+            <TreeItem itemId="grid" label="Data Grid">
+              <TreeItem itemId="grid-community" label="@mui/x-data-grid" />
+              <TreeItem itemId="grid-pro" label="@mui/x-data-grid-pro" />
+              <TreeItem itemId="grid-premium" label="@mui/x-data-grid-premium" />
+            </TreeItem>
+            <TreeItem itemId="pickers" label="Date and Time Pickers">
+              <TreeItem itemId="pickers-community" label="@mui/x-date-pickers" />
+              <TreeItem itemId="pickers-pro" label="@mui/x-date-pickers-pro" />
+            </TreeItem>
+            <TreeItem itemId="charts" label="Charts">
+              <TreeItem itemId="charts-community" label="@mui/x-charts" />
+            </TreeItem>
+            <TreeItem itemId="tree-view" label="Tree View">
+              <TreeItem itemId="tree-view-community" label="@mui/x-tree-view" />
+            </TreeItem>
+          </SimpleTreeView>
+        </Box>
+        </div>
         <div className="col-lg-12 text-lg-end text-center" >
           <button type="button" className="btn btn-outline-dark btn-sm mb-4 justify-content-end">글쓰기</button>
         </div>
