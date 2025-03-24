@@ -1,5 +1,5 @@
 // import "../css/styles.css";
-import React from 'react';
+import React, { Suspense } from 'react';
 import Footer from '@/app/components/layout/Footer';
 import AdminHeader from '../components/layout/AdminHeader';
 
@@ -8,7 +8,9 @@ const Layout = (props: { children: React.ReactNode }) => {
     <>
       <AdminHeader />
         <main>
+          <Suspense fallback={<p>Loading...</p>}>
             {props.children}
+          </Suspense>
         </main>
         <Footer />
     </>

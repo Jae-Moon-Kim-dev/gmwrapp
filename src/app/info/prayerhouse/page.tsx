@@ -1,18 +1,12 @@
 "use client";
 import { motion } from 'framer-motion';
-import { Board, BoardApiData } from '@/app/types/prayerhouse/prayerHouse';
+import { Board, BoardApiData, initialData } from '@/app/types/prayerhouse/prayerHouse';
 import { ColumnDef } from '@tanstack/react-table';
 import Table from '@/components/common/Table';
 import React, { useEffect, useState } from 'react';
 
 const Prayerhouse = () => {
 
-  const initialData: Board = {
-      boardNo: 0,
-      boardTitle: '',
-      boardUserId: 0,
-      viewCount: 0,
-    };
   const [board, setBoard] = useState<Board[]>([initialData]);
 
   const fetchBoards = async ():Promise<Board[]> => {

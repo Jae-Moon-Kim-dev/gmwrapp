@@ -12,3 +12,10 @@ export interface BoardApiData {
     create_date: string,
     views_count: number,
 };
+
+export const initialData: Board = {
+    boardNo: 0,
+    boardTitle: '',
+    boardUserId: 0,
+    viewCount: 0,
+  };
