@@ -1,37 +1,51 @@
 "use client";
 import { motion } from 'framer-motion';
-import { Board, BoardApiData } from '@/app/types/prayerhouse/prayerHouse';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-import Box from '@mui/material/Box';
-import React, { Suspense, useCallback, useEffect, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { MenuItem, MenuItemApiData } from '@/app/types/admin/menu/menu';
+import useFetch from '@/hooks/useFetch';
+import dynamic from "next/dynamic";
+import Loading from '@/app/loading';
+import * as S from '@/styles/admin/menu/AdminMenu.styled';
+import { Controller, useForm } from 'react-hook-form';
+import CommonSelect from '@/components/common/Select';
+import { ISelectData } from '@/app/types/common/select';
+import { Value } from 'sass';
+
+const Box = dynamic(() => import('@mui/material/Box'), { ssr: false });
 
 const Menu = () => {
 
-  const [items, setItems] = useState<MenuItem[]>([]);
-  const [item, setItem] = useState<MenuItem | null>(null);
+  const [itemId, setItemId] = useState<string>("");
+  
+  const { control } = useForm({
+    defaultValues: {
+      menu_id: "",
+      parent_menu_id: "",
+      menu_name: "",
+      visible_yn: "",
+    }
+  });
+  
+  const visibleData:ISelectData[] = [
+    {
+      label: "공개",
+      value: "Y",
+    },
+    {
+      label: "비공개",
+      value: "N",
+    },
+  ];
 
-  const fetchMenus = useCallback(async ():Promise<void> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/admin/menus`);
-    const { data } = await response.json();
-    console.log(data);
-    setItems(data);
-  }, []);
+  const { data: items, isLoading, error } = useFetch<MenuItem[]>('/api/admin/menus');
+  const { data: item, isLoading: isItemLoading, error: itemError } = useFetch<MenuItemApiData | null>(`/api/admin/menus/${itemId}`);
 
-  const fetchMenuById = useCallback(async (itemId: string):Promise<void> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/admin/menus/${itemId}`);
-    const { data } = await response.json();
-    setItem(data);
-  }, [item]);
-
-  const handleClickMenuItem = async (itemId: string) => {
-    await fetchMenuById(itemId);
+  const handleClickMenuItem = (itemId: string) => {
+    console.log(itemId);
+    setItemId(itemId);
   }
-
-  useEffect(() => {
-    fetchMenus(); 
-  },[]);
 
   return (
     <motion.div
@@ -49,12 +63,72 @@ const Menu = () => {
         <hr/>
         <div className='row' >
           <div className='col-6 p-3'>
+            {isLoading ? <Loading /> : 
             <Box sx={{ minHeight: 352, minWidth: 250 }}>
-                <RichTreeView items={items} onItemClick={(_, itemId) => handleClickMenuItem(itemId)} />
-            </Box>
+                { items && <RichTreeView items={items} onItemClick={(_, itemId) => handleClickMenuItem(itemId)} />}
+            </Box>}
           </div>
           <div className='col-6 p-3' >
-            {JSON.stringify(item)}
+            {isItemLoading ? <Loading /> : 
+            <S.LayoutTbl>
+              <div className="row" >
+                <S.Tit className='col-2'>
+                  <label htmlFor="menu_name" className="compulsory">이름</label>
+                </S.Tit>
+                <S.Cont className='col-10'>
+                  <Controller
+                    name='menu_name'
+                    control={control}
+                    rules={{ 
+                      required: "이름 입력하세요.",
+                      maxLength: { value: 10, message: "최대 10글자 이하로 입력해 주세요." }
+                    }}
+                    render={({
+                      field,
+                      field: {ref, value, onChange},
+                    }) => (
+                      <>
+                        <S.InputJo
+                          ref={ref}
+                          value={item?.menu_name}
+                          type="text" 
+                          id="menu_name"
+                          alt="이름"
+                          onChange={onChange}
+                        />
+                      </>
+                    )}
+                  />
+                </S.Cont>
+              </div>
+              { item?.menu_type === 'page' && 
+                <div className="row" >
+                  <S.Tit className='col-2'>
+                    <label htmlFor="visible_yn" className="compulsory">공개</label>
+                  </S.Tit>
+                  <S.Cont className='col-10'>
+                    <Controller
+                      name='visible_yn'
+                      control={control}
+                      // rules={{ 
+                      //   required: "이름 입력하세요.",
+                      //   maxLength: { value: 10, message: "최대 10글자 이하로 입력해 주세요." }
+                      // }}
+                      render={({
+                        field, 
+                        field: {ref, value, onChange},
+                      }) => (
+                        <CommonSelect {...field} width='100px' data={visibleData} handleChange={(e: ISelectData) => {
+                          onChange(e);
+                        }} /> 
+                        // setSelectValue={setInfoMonth2}
+                        // data={monthData()}
+                      )}
+                    />
+                  </S.Cont>
+                </div>
+              } 
+            </S.LayoutTbl>}
           </div>
         </div>
       </div>
