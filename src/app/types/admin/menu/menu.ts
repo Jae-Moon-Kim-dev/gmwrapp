@@ -19,4 +19,6 @@ export type MenuItemApiData = {
     paths: string;
     children: MenuItemApiData[];
 };
+
+export type MenuSaveType = "new" | "update";
   

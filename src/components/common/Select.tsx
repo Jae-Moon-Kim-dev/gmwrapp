@@ -11,12 +11,16 @@ const CommonSelect = ({
     data,
     width = '200px',
     setSelectValue,
-    handleChange, 
+    handleChange,
+    value,
+    isDisabled, 
 }:{
-    data: ISelectData[],
+    data?: ISelectData[],
     width?: string,
     setSelectValue?: React.Dispatch<React.SetStateAction<ISelectData>> | undefined,
     handleChange?: ((e:ISelectData) => void) | undefined,
+    value?: string,
+    isDisabled?: boolean
 }):ReactNode => {
     const customStyles: StylesConfig = {
         control: (provided) => ({
@@ -54,7 +58,9 @@ const CommonSelect = ({
         options={data}
         onChange={onChange}
         styles={customStyles}
-        defaultValue={data[0]}
+        defaultValue={data && data[0]}
+        isDisabled={isDisabled}
+        value={data && data.find((a) => (a.value === value))}
     />;
 }
 
