@@ -11,6 +11,9 @@ import * as S from '@/styles/admin/menu/AdminMenu.styled';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import CommonSelect from '@/components/common/Select';
 import { ISelectData } from '@/app/types/common/select';
+import { useQuery } from '@tanstack/react-query';
+import { fetchMenuData, fetchMenuListData, fetchMenuTypeData, fetchVisibleData } from '@/app/api/admin/menu';
+import { useQueryResult } from '@/hooks/useQueryResult';
 
 const Box = dynamic(() => import('@mui/material/Box'), { ssr: false });
 
@@ -36,10 +39,10 @@ const Menu = () => {
     name: 'menu_type',
   });
 
-  const { data: visibleData } = useFetch<ISelectData[]>('/api/common/getCombVisible');
-  const { data: menuTypeData } = useFetch<ISelectData[]>('/api/common/getMenuType');
-  const { data: items, isLoading } = useFetch<MenuItem[]>('/api/admin/menus');
-  const { data: item, isLoading: isItemLoading } = useFetch<MenuItemApiData | null>(`/api/admin/menus/${itemId}`);
+  const { data: visibleData } = useQueryResult<ISelectData[]>(['adminMenuVisibleData'], fetchVisibleData);
+  const { data: menuTypeData } = useQueryResult<ISelectData[]>(['adminMenuMenuTypeData'], fetchMenuTypeData);
+  const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], fetchMenuListData); 
+  const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], ({ queryKey }) => fetchMenuData(queryKey[1] as string));
 
   const addMenu = () => {
     reset();
@@ -222,7 +225,7 @@ const Menu = () => {
                         field, 
                         field: {onChange},
                       }) => (
-                        <CommonSelect {...field} width='100px' data={(visibleData as (ISelectData[] | undefined))} handleChange={(e: ISelectData) => {
+                        <CommonSelect {...field} width='100px' data={visibleData && (visibleData as (ISelectData[] | undefined))} handleChange={(e: ISelectData) => {
                           onChange(e);
                           setValue("visible_yn", e.value);
                         }} /> 
