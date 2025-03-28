@@ -11,9 +11,10 @@ import * as S from '@/styles/admin/menu/AdminMenu.styled';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import CommonSelect from '@/components/common/Select';
 import { ISelectData } from '@/app/types/common/select';
-import { useQuery } from '@tanstack/react-query';
-import { fetchMenuData, fetchMenuListData, fetchMenuTypeData, fetchVisibleData } from '@/app/api/admin/menu';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { fetchMenuData, fetchMenuListData, fetchMenuTypeData, fetchVisibleData, updateMenuData } from '@/app/api/admin/menu';
 import { useQueryResult } from '@/hooks/useQueryResult';
+
 
 const Box = dynamic(() => import('@mui/material/Box'), { ssr: false });
 
@@ -44,6 +45,14 @@ const Menu = () => {
   const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], fetchMenuListData); 
   const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], ({ queryKey }) => fetchMenuData(queryKey[1] as string));
 
+  const updateMenuMutation = useMutation({
+    mutationFn: updateMenuData,
+    onSuccess: () => {
+      const queryClient = useQueryClient();
+      queryClient.invalidateQueries({ queryKey: ['adminMenuListData', 'adminMenuOneData'] });
+    }
+  });
+
   const addMenu = () => {
     reset();
     setItemId('');
@@ -54,18 +63,15 @@ const Menu = () => {
     const { menu_type, menu_id, parent_menu_id, menu_name, menu_url } = getValues();
 
     if ( saveType === 'update' ) {
-      useFetch(`/api/admin/menus/saveMenu/${menu_id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          parent_menu_id: menu_type === 'menu' ? null : parent_menu_id,
-          menu_name,
-          menu_url
-        })
+      let token = document.head.querySelector('meta[name="csrf-token"]');
+      console.log("saveMenu", token);
+      updateMenuMutation.mutate({
+        parent_menu_id,
+        menu_type,
+        menu_name,
+        menu_url,
+        menu_id
       });
-
     }
   }
 

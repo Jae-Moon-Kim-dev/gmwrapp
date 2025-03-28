@@ -1,4 +1,4 @@
-import { MenuItem, MenuItemApiData } from "@/app/types/admin/menu/menu";
+import { MenuItem, MenuItemApiData, MenuUpdateData } from "@/app/types/admin/menu/menu";
 import { ISelectData } from "@/app/types/common/select";
 
 export const fetchVisibleData = async ():Promise<ISelectData[]> => {
@@ -32,7 +32,6 @@ export const fetchMenuListData = async ():Promise<MenuItem[]> => {
 };
 
 export const fetchMenuData = async (menuId: string):Promise<MenuItemApiData> => {
-  console.log('fetchMenuData', menuId);
   const result = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/admin/menus/${menuId}`).then(res => res.json()).then(res => {
     if (!res.success) {
       throw new Error("Failed to fetch data");
@@ -41,3 +40,27 @@ export const fetchMenuData = async (menuId: string):Promise<MenuItemApiData> => 
   });
   return result;
 };
+
+export const updateMenuData = async ( data: MenuUpdateData ):Promise<boolean> => {
+  const { menu_id, parent_menu_id, menu_type, menu_name, menu_url } = data;
+  await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/admin/menus/saveMenu/${menu_id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      parent_menu_id: menu_type === 'menu' ? null : parent_menu_id,
+      menu_name,
+      menu_url
+    })
+  })
+  // .then(res => res.json()).then(res => {
+  //   if (!res.success) {
+  //     throw new Error("Failed to update data");
+  //   }
+  //   return res.success;
+  // });
+
+  return true;
+}
+

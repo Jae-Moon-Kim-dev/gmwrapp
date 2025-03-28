@@ -20,5 +20,13 @@ export type MenuItemApiData = {
     children: MenuItemApiData[];
 };
 
+export type MenuUpdateData = {
+  menu_id: string;
+  parent_menu_id: string;
+  menu_type: string;
+  menu_name: string;
+  menu_url: string;
+};
+
 export type MenuSaveType = "new" | "update";
   
