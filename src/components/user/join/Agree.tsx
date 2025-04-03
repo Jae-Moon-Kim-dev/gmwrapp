@@ -438,8 +438,8 @@ const Agree = ({className}:{className:string}):ReactNode => {
           centered
           show={modalShow} 
           onHide={() => { setModalShow(false); }} 
-          bodyContent={<p className='p-3 fw-bold' > 이용약관에 동의하셔야 합니다. </p>}
-          closeLabel='확인'
+          body={<p className='p-3 fw-bold' > 이용약관에 동의하셔야 합니다. </p>}
+          close_label='확인'
         />
     </>;
 }

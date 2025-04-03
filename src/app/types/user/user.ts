@@ -70,3 +70,36 @@ export const initInfoData = {
     memPwd: '',
     memPwdConfirm: '',
 };
+
+export type User = {
+    id: number,
+    name: string,
+    email: string,
+}
+
+export type Login = {
+    id: string,
+    pwd: string,
+}
+
+export const initLoginData = {
+    id: '',
+    pwd: ''
+}
+
+export type UserStoreState = {
+    user: User,
+}
+
+export type UserStoreActions = {
+    setUser: (loginUser: UserStoreState['user']) => void,
+    initUser: () => void,
+}
+
+export const initUserData = {
+    id: 0,
+    name: '',
+    email: '',
+}
+
+export type UserStore = UserStoreState & UserStoreActions;

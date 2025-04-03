@@ -11,3 +11,9 @@ export interface CustomQueryHookReturnType<T> {
     refetch: (options?: RefetchOptions)=> Promise<QueryObserverResult<T, Error>>,
     query: UseQueryResult<T, Error>,
 }
+
+export type ApiReturn = {
+    success: boolean,
+    message?: string,
+    data?: unknown,
+}

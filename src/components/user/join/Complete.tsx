@@ -4,7 +4,7 @@ import React, { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import * as S from '@/styles/user/join/UserComplete.styled';
 
-const Agree = ({className}:{className:string}):ReactNode => {
+const Complete = ({className}:{className:string}):ReactNode => {
   const router = useRouter();
 
   const goHomePage = () => {
@@ -22,4 +22,4 @@ const Agree = ({className}:{className:string}):ReactNode => {
   </S.CompleteContainer>;
 }
 
-export default Agree;
+export default Complete;

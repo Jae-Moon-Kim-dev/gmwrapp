@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import Modal, { ModalProps } from 'react-bootstrap/Modal';
 
 const CommonModal = <CommonModalProps extends ModalProps & ModalConfig>(props: CommonModalProps):ReactNode => {
-    const { headerContent, bodyContent, closeLabel } = props;
+    const { header, body, close_label } = props;
 
   return (
     <Modal
@@ -12,14 +12,14 @@ const CommonModal = <CommonModalProps extends ModalProps & ModalConfig>(props: C
     >
       <Modal.Header closeButton>
         <Modal.Title>
-            { headerContent }
+            { header }
         </Modal.Title>
       </Modal.Header>
       <Modal.Body >
-            { bodyContent }
+            { body }
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={props.onHide}>{closeLabel ?? '닫기'}</Button>
+        <Button onClick={props.onHide}>{close_label ?? '닫기'}</Button>
       </Modal.Footer>
     </Modal>
   );
