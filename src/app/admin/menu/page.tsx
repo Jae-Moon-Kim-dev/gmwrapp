@@ -49,7 +49,8 @@ const Menu = () => {
     mutationFn: updateMenuData,
     onSuccess: () => {
       const queryClient = useQueryClient();
-      queryClient.invalidateQueries({ queryKey: ['adminMenuListData', 'adminMenuOneData'] });
+      queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
+      queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });
     }
   });
 
@@ -63,8 +64,6 @@ const Menu = () => {
     const { menu_type, menu_id, parent_menu_id, menu_name, menu_url } = getValues();
 
     if ( saveType === 'update' ) {
-      let token = document.head.querySelector('meta[name="csrf-token"]');
-      console.log("saveMenu", token);
       updateMenuMutation.mutate({
         parent_menu_id,
         menu_type,

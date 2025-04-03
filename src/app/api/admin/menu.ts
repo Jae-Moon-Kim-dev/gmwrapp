@@ -44,17 +44,11 @@ export const fetchMenuData = async (menuId: string):Promise<MenuItemApiData> => 
 
 export const updateMenuData = async ( data: MenuUpdateData ):Promise<boolean> => {
   const { menu_id, parent_menu_id, menu_type, menu_name, menu_url } = data;
-  await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/admin/menus/saveMenu/${menu_id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
+  await apiClient.patch(`/api/admin/menus/saveMenu/${menu_id}`,{
       parent_menu_id: menu_type === 'menu' ? null : parent_menu_id,
       menu_name,
       menu_url
-    })
-  })
+  });
   // .then(res => res.json()).then(res => {
   //   if (!res.success) {
   //     throw new Error("Failed to update data");
