@@ -17,7 +17,6 @@ const Manage = ():ReactNode => {
     const [errorModalShow, setErrorModalShow] = useState<boolean>(true);
     const userStoreData = userStore((state) => state.user); 
     const setUserStore = userStore((state) => state.setUser);
-    const initUserStore = userStore((state) => state.initUser);
 
     const form = useForm({
         defaultValues: initLoginData,
@@ -45,7 +44,6 @@ const Manage = ():ReactNode => {
 
     const handleShowLogout = useCallback(async () => {
         await logout();
-        initUserStore();
     }, []);
 
     useEffect(() => {
