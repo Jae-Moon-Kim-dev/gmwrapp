@@ -1,6 +1,8 @@
 import axios, { AxiosError } from 'axios';
 import Swal from 'sweetalert2';
 import { logout, refreshToken } from './user/manage';
+import { userStore } from '@/stores/userStore';
+import { ApiReturn } from '../types/common/common';
 
 const apiClient = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_API_DOMAIN}`,
@@ -9,7 +11,6 @@ const apiClient = axios.create({
 
 apiClient.interceptors.response.use(response=>response
     , async (error) => {
-        console.log(error);
         const originalRequest = error.config;
         
         if ( error.response ) {
@@ -24,11 +25,18 @@ apiClient.interceptors.response.use(response=>response
                     });
                     break;
                 case "T-002":// access token 만료
-                    await refreshToken();
-                    return apiClient(originalRequest);
-                case "T-003":// refresh token 만료
-                    await logout();
+                    const res = await refreshToken();
+
+                    const {success, data, message} = res as ApiReturn;
+                    
+                    if ( success ) {
+                        return apiClient(originalRequest);
+                    };
                     break;
+                case "T-003":// refresh token 만료
+                    console.log("T-003", userStore.getState());
+                    userStore.getState().initUser();
+                    window.location.href = "/";
                 case "T-004":// 토큰 없음
                     Swal.fire({
                         icon: "error",

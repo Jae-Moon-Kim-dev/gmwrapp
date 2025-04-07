@@ -5,10 +5,10 @@ import CommonSelect from '@/components/common/Select';
 import { ISelectData } from '@/app/types/common/select';
 import { fetchMenuTypeData, fetchVisibleData } from '@/app/api/admin/menu';
 import { useQueryResult } from '@/hooks/useQueryResult';
-import { MenuItemApiData } from '@/app/types/admin/menu/menu';
+import { MenuItem } from '@/app/types/admin/menu/menu';
 
 
-const MenuEdit = ({item}: {item:MenuItemApiData | undefined}):ReactNode => {
+const MenuAdd = ({items}: {items: MenuItem[] | undefined}):ReactNode => {
     const { data: visibleData } = useQueryResult<ISelectData[]>(['adminMenuVisibleData'], fetchVisibleData);
     const { data: menuTypeData } = useQueryResult<ISelectData[]>(['adminMenuMenuTypeData'], fetchMenuTypeData);
 
@@ -28,17 +28,14 @@ const MenuEdit = ({item}: {item:MenuItemApiData | undefined}):ReactNode => {
         name: 'menu_type',
     });
 
-    useEffect(() => {
-
-        if ( item ) {
-            setValue("menu_id", item.menu_id ? item.menu_id.toString() : '');
-            setValue("parent_menu_id", item.parent_menu_id ? item.parent_menu_id.toString() : '');
-            setValue("menu_name", item.menu_name ? item.menu_name : '');
-            setValue("menu_url", item.menu_url ? item.menu_url : '');
-            setValue("menu_type", item.menu_type ? item.menu_type : '');
-            setValue("visible_yn", item.visible_yn ? item.visible_yn : '');
-        }
-    }, [item]);
+    const topMenus = () => {
+        return items?.filter(item => item.parentId === null || item.parentId === '').map(item => {
+            return {
+                label: item.label,
+                value: item.id,
+            }
+        });
+    }
 
     return <>
         <S.LayoutTbl>
@@ -62,7 +59,6 @@ const MenuEdit = ({item}: {item:MenuItemApiData | undefined}):ReactNode => {
                     {...field} 
                     width='150px' 
                     data={(menuTypeData as (ISelectData[] | undefined))} 
-                    isDisabled={item?.parent_menu_id === null} 
                     handleChange={(e: ISelectData) => {
                         onChange(e);
                         setValue("menu_type", e.value);
@@ -72,6 +68,33 @@ const MenuEdit = ({item}: {item:MenuItemApiData | undefined}):ReactNode => {
                 />
             </S.Cont>
             </div>
+            {menu_type === 'page' &&
+                <div className="row" >
+                    <S.Tit className='col-2'>
+                        <label htmlFor="menu_type" className="compulsory">상위 메뉴</label>
+                    </S.Tit>
+                    <S.Cont className='col-10'>
+                        <Controller
+                        name='parent_menu_id'
+                        control={control}
+                        render={({
+                            field, 
+                            field: {onChange},
+                        }) => (
+                            <CommonSelect 
+                            {...field} 
+                            width='150px' 
+                            data={(topMenus() as (ISelectData[] | undefined))} 
+                            handleChange={(e: ISelectData) => {
+                                onChange(e);
+                                setValue("parent_menu_id", e.value);
+                            }} 
+                            /> 
+                        )}
+                        />
+                    </S.Cont>
+                </div>
+            }
             <div className="row" >
             <S.Tit className='col-2'>
                 <label htmlFor="menu_name" className="compulsory">이름</label>
@@ -162,4 +185,4 @@ const MenuEdit = ({item}: {item:MenuItemApiData | undefined}):ReactNode => {
     </>;
 }
 
-export default MenuEdit;
+export default MenuAdd;

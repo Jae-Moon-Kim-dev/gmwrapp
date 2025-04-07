@@ -96,7 +96,7 @@ export type UserStoreActions = {
     initUser: () => void,
 }
 
-export const initUserData = {
+export const initUserData: User = {
     id: 0,
     name: '',
     email: '',

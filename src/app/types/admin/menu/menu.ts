@@ -2,6 +2,7 @@ import { TreeViewBaseItem } from "@mui/x-tree-view";
 
 export type MenuItem = TreeViewBaseItem<{
     id: string;
+    parentId: string;
     label: string;
     disabled?: boolean;
   }>;

@@ -1,6 +1,6 @@
 import { ApiReturn } from "@/app/types/common/common";
 import apiClient from "../common";
-import { Login, User } from "@/app/types/user/user";
+import { initUserData, Login, User } from "@/app/types/user/user";
 import Swal from 'sweetalert2';
 import { userStore } from '@/stores/userStore';
 
@@ -30,20 +30,13 @@ export const getUser = async (loginData: Login):Promise<User> => {
         });
     }
 
-    return data as Promise<User>;
+    return (data || initUserData) as User;
 };
 
-export const refreshToken = async () => {
+export const refreshToken = async ():Promise<ApiReturn> => {
     const res = await apiClient.post('/api/v1/refreshToken');
 
-    const {success, data, message} = res.data as ApiReturn;
-
-    if ( !success ) {
-        Swal.fire({
-            icon: "error",
-            text: message
-        });
-    };
+    return res.data as ApiReturn;
 }
 
 export const logout = async () => {
