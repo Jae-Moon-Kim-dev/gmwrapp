@@ -7,7 +7,7 @@ import CommonModal from '../common/Modal';
 import { Container, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap';
 import * as S from '@/styles/user/login/UserLogin.styled';
 import { initLoginData, User } from '@/app/types/user/user';
-import { login, logout } from '@/app/api/user/manage';
+import { getUser, login, logout } from '@/app/api/user/manage';
 import Swal from 'sweetalert2';
 import { userStore } from '@/stores/userStore';
 
@@ -36,7 +36,8 @@ const Manage = ():ReactNode => {
         const isVallid = await trigger();
 
 		if (isVallid) {
-			const user = await login({id, pwd});
+			await login({id, pwd});
+			const user = await getUser({id, pwd});
             setModalShow(false);
             setUserStore({...user});
 		}
