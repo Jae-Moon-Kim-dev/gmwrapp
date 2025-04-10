@@ -33,11 +33,12 @@ const Menu = () => {
       visible_yn: "",
     }
   });
-
+  
   const { control, setValue, getValues, reset } = menuForm;
-
+  
   const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], fetchMenuListData); 
   const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], ({ queryKey }) => fetchMenuData(queryKey[1] as string));
+  const [menuItems, setMenuItems] = useState<MenuItem[] | undefined>([]);
 
   const insertMenuMutation = useMutation({
     mutationFn: insertMenuData,
@@ -133,8 +134,30 @@ const Menu = () => {
     setSaveType('update');
   }
 
+  const handleOrderMenu = () => {
+    let tmpItems = [];
+    let selectedItemIdx = -1;
+    if ( items && !!items.length ) {
+      const selectedItem = items?.find( a => a.id === itemId );
+      selectedItemIdx = items?.findIndex( a => a.id === itemId ) || -1;
+
+      if ( selectedItemIdx === 0 ) return;
+
+      const parentId = selectedItem?.parentId;
+      
+      if ( !(!!parentId) && !!selectedItem ) {
+        tmpItems = items?.filter((a, idx) => !(!!a.parentId) && idx !== (selectedItemIdx));
+        // tmpItems.splice((selectedItemIdx-1), 0, selectedItem); 위로
+        // tmpItems.splice((selectedItemIdx+1), 0, selectedItem); 아래로
+        console.log(tmpItems);
+      }
+
+    }
+  }
+
   useEffect(() => {
     if ( items && items.length > 0 ) {
+      setMenuItems(items);
       setItemId(items[0].id);
       setSelectedItems(items[0].id);
     }
@@ -158,8 +181,22 @@ const Menu = () => {
           <div className='col-6 p-3'>
             {isLoading ? <Loading /> : 
             <Box sx={{ minHeight: 352, minWidth: 250 }}>
-                { items && <RichTreeView items={items} selectedItems={selectedItems} onItemClick={(_, itemId) => handleClickMenuItem(itemId)} />}
+                { menuItems && <RichTreeView items={menuItems} selectedItems={selectedItems} onItemClick={(_, itemId) => handleClickMenuItem(itemId)} />}
             </Box>}
+            <div className='d-flex flex-row-reverse'>
+              <div className='my-3 mx-1' >
+                <button type="button" onClick={()=>{}} className="btn btn-primary px-4">맨 위로</button>
+              </div>
+              <div className='my-3 mx-1' >
+                <button type="button" onClick={handleOrderMenu} className="btn btn-primary px-4">위로</button>
+              </div>
+              <div className='my-3 mx-1' >
+                <button type="button" onClick={()=>{}} className="btn btn-primary px-4">아래로</button>
+              </div>
+              <div className='my-3 mx-1' >
+                <button type="button" onClick={()=>{}} className="btn btn-primary px-4">맨 아래로</button>
+              </div>
+            </div>
           </div>
           <div className='col-6 px-3 py-1' >
             {isItemLoading ? <Loading /> : 
@@ -173,7 +210,7 @@ const Menu = () => {
             />
             :
             <MenuAdd 
-              items={items} 
+              items={menuItems} 
             />
           }
           </FormProvider>
