@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect } from 'react';
 import * as S from '@/styles/admin/menu/AdminMenu.styled';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm, useFormContext, useWatch } from 'react-hook-form';
 import CommonSelect from '@/components/common/Select';
 import { ISelectData } from '@/app/types/common/select';
 import { fetchMenuTypeData, fetchVisibleData } from '@/app/api/admin/menu';
@@ -12,16 +12,7 @@ const MenuAdd = ({items}: {items: MenuItem[] | undefined}):ReactNode => {
     const { data: visibleData } = useQueryResult<ISelectData[]>(['adminMenuVisibleData'], fetchVisibleData);
     const { data: menuTypeData } = useQueryResult<ISelectData[]>(['adminMenuMenuTypeData'], fetchMenuTypeData);
 
-    const { control, setValue, getValues, reset } = useForm({
-        defaultValues: {
-          menu_id: "",
-          parent_menu_id: "",
-          menu_name: "",
-          menu_url: "",
-          menu_type: "menu",
-          visible_yn: "",
-        }
-      });
+    const { control, setValue, getValues, reset } = useFormContext();
 
     const menu_type = useWatch({
         control,

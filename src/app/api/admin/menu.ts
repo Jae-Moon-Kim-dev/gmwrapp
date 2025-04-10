@@ -1,4 +1,4 @@
-import { MenuItem, MenuItemApiData, MenuUpdateData } from "@/app/types/admin/menu/menu";
+import { MenuDeleteData, MenuItem, MenuItemApiData, MenuUpdateData } from "@/app/types/admin/menu/menu";
 import { ISelectData } from "@/app/types/common/select";
 import apiClient from "../common";
 import { ApiReturn } from "@/app/types/common/common";
@@ -42,19 +42,33 @@ export const fetchMenuData = async (menuId: string):Promise<MenuItemApiData> => 
   return data as Promise<MenuItemApiData>;
 };
 
+export const deleteMenuData = async ( data: MenuDeleteData ):Promise<boolean> => {
+  const { menu_id } = data;
+  await apiClient.delete(`/api/admin/menus/deleteMenu/${menu_id}`);
+
+  return true;
+}
+
 export const updateMenuData = async ( data: MenuUpdateData ):Promise<boolean> => {
-  const { menu_id, parent_menu_id, menu_type, menu_name, menu_url } = data;
+  const { menu_id, parent_menu_id, menu_type, menu_name, menu_url, visible_yn } = data;
   await apiClient.patch(`/api/admin/menus/saveMenu/${menu_id}`,{
       parent_menu_id: menu_type === 'menu' ? null : parent_menu_id,
       menu_name,
-      menu_url
+      menu_url,
+      visible_yn,
   });
-  // .then(res => res.json()).then(res => {
-  //   if (!res.success) {
-  //     throw new Error("Failed to update data");
-  //   }
-  //   return res.success;
-  // });
+
+  return true;
+}
+
+export const insertMenuData = async ( data: MenuUpdateData ):Promise<boolean> => {
+  const { menu_id, parent_menu_id, menu_type, menu_name, menu_url,visible_yn } = data;
+  await apiClient.post(`/api/admin/menus/saveMenu`,{
+      parent_menu_id: menu_type === 'menu' ? null : parent_menu_id,
+      menu_name,
+      menu_url,
+      visible_yn,
+  });
 
   return true;
 }

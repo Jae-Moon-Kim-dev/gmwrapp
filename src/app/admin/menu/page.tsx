@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { MenuItem, MenuItemApiData, MenuSaveType } from '@/app/types/admin/menu/menu';
 import dynamic from "next/dynamic";
 import Loading from '@/app/loading';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchMenuData, fetchMenuListData, fetchMenuTypeData, fetchVisibleData, updateMenuData } from '@/app/api/admin/menu';
+import { deleteMenuData, fetchMenuData, fetchMenuListData, fetchMenuTypeData, fetchVisibleData, insertMenuData, updateMenuData } from '@/app/api/admin/menu';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import Swal from 'sweetalert2';
 import MenuEdit from '@/components/admin/menu/MenuEdit';
@@ -21,8 +21,9 @@ const Menu = () => {
   const [itemId, setItemId] = useState<string>("");
   const [selectedItems, setSelectedItems] = useState<string>('');
   const [saveType, setSaveType] = useState<MenuSaveType>('update');
+  const queryClient = useQueryClient();
   
-  const { control, setValue, getValues, reset } = useForm({
+  const menuForm = useForm({
     defaultValues: {
       menu_id: "",
       parent_menu_id: "",
@@ -33,13 +34,29 @@ const Menu = () => {
     }
   });
 
+  const { control, setValue, getValues, reset } = menuForm;
+
   const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], fetchMenuListData); 
   const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], ({ queryKey }) => fetchMenuData(queryKey[1] as string));
+
+  const insertMenuMutation = useMutation({
+    mutationFn: insertMenuData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
+    }
+  });
 
   const updateMenuMutation = useMutation({
     mutationFn: updateMenuData,
     onSuccess: () => {
-      const queryClient = useQueryClient();
+      queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
+      queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });
+    }
+  });
+
+  const deleteMenuMutation = useMutation({
+    mutationFn: deleteMenuData,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
       queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });
     }
@@ -52,7 +69,7 @@ const Menu = () => {
   }
 
   const saveMenu = () => {
-      const { menu_type, menu_id, parent_menu_id, menu_name, menu_url } = getValues();
+      const { menu_type, menu_id, parent_menu_id, menu_name, menu_url, visible_yn } = getValues();
 
       Swal.fire({
         title : "저장 하시겠습니까?",
@@ -70,14 +87,44 @@ const Menu = () => {
               menu_type,
               menu_name,
               menu_url,
-              menu_id
+              menu_id,
+              visible_yn,
+            });
+          } else {
+            insertMenuMutation.mutate({
+              parent_menu_id,
+              menu_type,
+              menu_name,
+              menu_url,
+              menu_id,
+              visible_yn,
             });
           }
         }
   
       });
+  }
 
-      
+  const deleteMenu = () => {
+    const { menu_id } = getValues();
+
+    Swal.fire({
+      title : "삭제 하시겠습니까?",
+      icon : "question",
+      showCancelButton : true,
+      confirmButtonColor : "#444",
+      cancelButtonColor : "#888",
+      confirmButtonText : "예",
+      cancelButtonText : "아니오",
+    }).then((result) => {
+      if (result.value) {
+        deleteMenuMutation.mutate({
+          menu_id,
+        });
+      }
+
+    });
+
   }
 
   const handleClickMenuItem = (itemId: string) => {
@@ -119,6 +166,7 @@ const Menu = () => {
             <><div className='mx-3 mb-3 d-flex flex-row-reverse' >
             <button type="button" onClick={addMenu} className="btn btn-primary px-4">추가</button>
           </div>
+          <FormProvider {...menuForm}>
           {saveType === 'update' ?
             <MenuEdit 
               item={item}
@@ -128,8 +176,14 @@ const Menu = () => {
               items={items} 
             />
           }
-            <div className='m-3 d-flex flex-row-reverse' >
-              <button type="button" onClick={saveMenu} className="btn btn-primary px-4">저장</button>
+          </FormProvider>
+            <div className='d-flex flex-row-reverse'>
+              <div className='my-3 mx-1' >
+                <button type="button" onClick={saveMenu} className="btn btn-primary px-4">저장</button>
+              </div>
+              <div className='my-3 mx-1' >
+                <button type="button" onClick={deleteMenu} className="btn btn-primary px-4">삭제</button>
+              </div>
             </div>
             </>}
           </div>

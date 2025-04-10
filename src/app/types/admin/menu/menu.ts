@@ -27,6 +27,11 @@ export type MenuUpdateData = {
   menu_type: string;
   menu_name: string;
   menu_url: string;
+  visible_yn: string;
+};
+
+export type MenuDeleteData = {
+  menu_id: string;
 };
 
 export type MenuSaveType = "new" | "update";
