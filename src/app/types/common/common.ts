@@ -1,4 +1,4 @@
-import { Query, QueryObserverResult, RefetchOptions, UseQueryResult } from "@tanstack/react-query";
+import { QueryObserverResult, RefetchOptions, UseQueryResult } from "@tanstack/react-query";
 
 export interface UseFetchReturn<T> {
     data: T | null | undefined;

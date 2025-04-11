@@ -4,7 +4,9 @@ export type MenuItem = TreeViewBaseItem<{
     id: string;
     parentId: string;
     label: string;
+    menuOrder: number;
     disabled?: boolean;
+    children?: MenuItem[];
   }>;
 
 export type MenuItemApiData = {
@@ -35,4 +37,5 @@ export type MenuDeleteData = {
 };
 
 export type MenuSaveType = "new" | "update";
-  
+
+export type MenuOrderGubun = "start" | "top" | "bottom" | "end";

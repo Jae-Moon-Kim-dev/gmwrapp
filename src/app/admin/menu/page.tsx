@@ -1,14 +1,14 @@
 "use client";
 import { motion } from 'framer-motion';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { MenuItem, MenuItemApiData, MenuSaveType } from '@/app/types/admin/menu/menu';
+import { MenuItem, MenuItemApiData, MenuOrderGubun, MenuSaveType } from '@/app/types/admin/menu/menu';
 import dynamic from "next/dynamic";
 import Loading from '@/app/loading';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteMenuData, fetchMenuData, fetchMenuListData, fetchMenuTypeData, fetchVisibleData, insertMenuData, updateMenuData } from '@/app/api/admin/menu';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteMenuData, fetchMenuData, fetchMenuListData, insertMenuData, updateMenuData, updateMenuOrder } from '@/app/api/admin/menu';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import Swal from 'sweetalert2';
 import MenuEdit from '@/components/admin/menu/MenuEdit';
@@ -19,7 +19,6 @@ const Box = dynamic(() => import('@mui/material/Box'), { ssr: false });
 const Menu = () => {
 
   const [itemId, setItemId] = useState<string>("");
-  const [selectedItems, setSelectedItems] = useState<string>('');
   const [saveType, setSaveType] = useState<MenuSaveType>('update');
   const queryClient = useQueryClient();
   
@@ -34,7 +33,7 @@ const Menu = () => {
     }
   });
   
-  const { control, setValue, getValues, reset } = menuForm;
+  const { getValues, reset } = menuForm;
   
   const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], fetchMenuListData); 
   const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], ({ queryKey }) => fetchMenuData(queryKey[1] as string));
@@ -49,6 +48,14 @@ const Menu = () => {
 
   const updateMenuMutation = useMutation({
     mutationFn: updateMenuData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
+      queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });
+    }
+  });
+
+  const saveOrderMenuMutation = useMutation({
+    mutationFn: updateMenuOrder,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
       queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });
@@ -130,36 +137,113 @@ const Menu = () => {
 
   const handleClickMenuItem = (itemId: string) => {
     setItemId(itemId);
-    setSelectedItems(itemId);
     setSaveType('update');
   }
 
-  const handleOrderMenu = () => {
-    let tmpItems = [];
-    let selectedItemIdx = -1;
-    if ( items && !!items.length ) {
-      const selectedItem = items?.find( a => a.id === itemId );
-      selectedItemIdx = items?.findIndex( a => a.id === itemId ) || -1;
+  const handleOrderMenu = (gubun: MenuOrderGubun):void => {
+    let tmpItems:MenuItem[] = [];
+    let selectedItemIdx = 0;
+    let childrenParentId = '';
 
-      if ( selectedItemIdx === 0 ) return;
-
-      const parentId = selectedItem?.parentId;
+    if ( menuItems && !!menuItems.length ) {
+      let selectedItem = menuItems?.find( a => a.id === itemId );
+      let parentId = selectedItem?.parentId;
+      
+      // console.log('menuItems, itemId, selectedItemIdx, selectedItem', menuItems, itemId, selectedItemIdx, selectedItem);
+      if ( !selectedItem ) {
+        menuItems?.forEach(a=> {
+          a.children?.forEach(b=> {
+            if ( b.id === itemId ) {
+              childrenParentId = b.parentId;
+            }
+          });
+        });
+        parentId = childrenParentId;
+        selectedItem = menuItems?.find( a => a.id === childrenParentId );
+      }
       
       if ( !(!!parentId) && !!selectedItem ) {
-        tmpItems = items?.filter((a, idx) => !(!!a.parentId) && idx !== (selectedItemIdx));
-        // tmpItems.splice((selectedItemIdx-1), 0, selectedItem); 위로
-        // tmpItems.splice((selectedItemIdx+1), 0, selectedItem); 아래로
-        console.log(tmpItems);
-      }
+        const lastIdx = menuItems?.filter(a => !(!!a.parentId)).length -1;
+        selectedItemIdx = menuItems?.findIndex( a => a.id === itemId );
+        tmpItems = menuItems?.filter((a, idx) => !(!!a.parentId) && idx !== (selectedItemIdx));
 
+        if ( gubun === 'top' ) {
+          if ( selectedItemIdx === 0 ) return;
+
+          tmpItems.splice((selectedItemIdx-1), 0, selectedItem);
+        } else if ( gubun === 'start' ) {
+          tmpItems.splice(0, 0, selectedItem);
+        } else if ( gubun === 'bottom' ) {
+          
+          if ( selectedItemIdx === lastIdx ) return;
+          tmpItems.splice((selectedItemIdx+1), 0, selectedItem);
+        } else if ( gubun === 'end' ) {
+          tmpItems.splice(lastIdx, 0, selectedItem);
+        }
+        
+        tmpItems = tmpItems?.filter(a => !(!!a.parentId)).map((a, idx)=> {
+          return {
+            ...a,
+            menuOrder: (idx+1)
+          };
+        });
+
+        setMenuItems(tmpItems);
+      } else if ( parentId && selectedItem && (selectedItem.children && !!selectedItem.children.length) ) {
+        const childrenItems = selectedItem?.children;
+        selectedItemIdx = childrenItems.findIndex( a => a.id === itemId ) || 0;
+        const childrenSelectedItem = childrenItems.find( a => a.id === itemId );
+        tmpItems = childrenItems.filter((a, idx) => idx !== (selectedItemIdx));
+        const lastIdx = (childrenItems && !!childrenItems.length) ? childrenItems.length -1 : 0;
+
+        if ( childrenSelectedItem ) {
+          if ( gubun === 'top' ) {
+            if ( selectedItemIdx === 0 ) return;
+
+            tmpItems.splice((selectedItemIdx-1), 0, childrenSelectedItem);
+          } else if ( gubun === 'start' ) {
+            tmpItems.splice(0, 0, childrenSelectedItem);
+          } else if ( gubun === 'bottom' ) {
+            
+            if ( selectedItemIdx === lastIdx ) return;
+            tmpItems.splice((selectedItemIdx+1), 0, childrenSelectedItem);
+          } else if ( gubun === 'end' ) {
+            tmpItems.splice(lastIdx, 0, childrenSelectedItem);
+          }
+
+          tmpItems = tmpItems?.map((a, idx)=> {
+            return {
+              ...a,
+              menuOrder: (idx+1)
+            };
+          });
+
+          setMenuItems(
+            menuItems.map(a => {
+              if ( a.id === parentId ) {
+                return {
+                  ...a,
+                  children: tmpItems
+                };
+              }
+              return a;
+            })
+          );
+        }
+      }
     }
+  }
+
+  const handleOrderMenuSave = () => {
+    saveOrderMenuMutation.mutate({
+      datas: menuItems
+    });
   }
 
   useEffect(() => {
     if ( items && items.length > 0 ) {
       setMenuItems(items);
       setItemId(items[0].id);
-      setSelectedItems(items[0].id);
     }
   }, [items]);
 
@@ -181,20 +265,23 @@ const Menu = () => {
           <div className='col-6 p-3'>
             {isLoading ? <Loading /> : 
             <Box sx={{ minHeight: 352, minWidth: 250 }}>
-                { menuItems && <RichTreeView items={menuItems} selectedItems={selectedItems} onItemClick={(_, itemId) => handleClickMenuItem(itemId)} />}
+                { menuItems && <RichTreeView items={menuItems} selectedItems={itemId} onItemClick={(_, itemId) => handleClickMenuItem(itemId)} />}
             </Box>}
             <div className='d-flex flex-row-reverse'>
               <div className='my-3 mx-1' >
-                <button type="button" onClick={()=>{}} className="btn btn-primary px-4">맨 위로</button>
+                <button type="button" onClick={handleOrderMenuSave} className="btn btn-primary px-2">위치저장</button>
               </div>
               <div className='my-3 mx-1' >
-                <button type="button" onClick={handleOrderMenu} className="btn btn-primary px-4">위로</button>
+                <button type="button" onClick={()=>handleOrderMenu('end')} className="btn btn-primary btn-sm px-2">맨 아래로</button>
               </div>
               <div className='my-3 mx-1' >
-                <button type="button" onClick={()=>{}} className="btn btn-primary px-4">아래로</button>
+                <button type="button" onClick={()=>handleOrderMenu('bottom')} className="btn btn-primary btn-sm px-2">아래로</button>
               </div>
               <div className='my-3 mx-1' >
-                <button type="button" onClick={()=>{}} className="btn btn-primary px-4">맨 아래로</button>
+                <button type="button" onClick={()=>handleOrderMenu('top')} className="btn btn-primary btn-sm px-2">위로</button>
+              </div>
+              <div className='my-3 mx-1' >
+                <button type="button" onClick={()=>handleOrderMenu('start')} className="btn btn-primary btn-sm px-2">맨 위로</button>
               </div>
             </div>
           </div>
@@ -218,9 +305,11 @@ const Menu = () => {
               <div className='my-3 mx-1' >
                 <button type="button" onClick={saveMenu} className="btn btn-primary px-4">저장</button>
               </div>
-              <div className='my-3 mx-1' >
-                <button type="button" onClick={deleteMenu} className="btn btn-primary px-4">삭제</button>
-              </div>
+              {saveType === 'update' && 
+                <div className='my-3 mx-1' >
+                  <button type="button" onClick={deleteMenu} className="btn btn-primary px-4">삭제</button>
+                </div>
+              }
             </div>
             </>}
           </div>

@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import CommonModal from '../common/Modal';
 import { Container, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap';
 import * as S from '@/styles/user/login/UserLogin.styled';
-import { initLoginData, User } from '@/app/types/user/user';
+import { initLoginData } from '@/app/types/user/user';
 import { getUser, login, logout } from '@/app/api/user/manage';
 import Swal from 'sweetalert2';
 import { userStore } from '@/stores/userStore';
@@ -14,7 +14,6 @@ import { userStore } from '@/stores/userStore';
 const Manage = ():ReactNode => {
 
     const [modalShow, setModalShow] = useState<boolean>(false);
-    const [errorModalShow, setErrorModalShow] = useState<boolean>(true);
     const userStoreData = userStore((state) => state.user); 
     const setUserStore = userStore((state) => state.setUser);
 
@@ -36,7 +35,7 @@ const Manage = ():ReactNode => {
 
 		if (isVallid) {
 			await login({id, pwd});
-			const user = await getUser({id, pwd});
+			const user = await getUser();
             setModalShow(false);
             setUserStore({...user});
 		}

@@ -9,7 +9,7 @@ export const login = async (loginData: Login) => {
         email: loginData.id,
         password: loginData.pwd,
     });
-    const {success, data, message} = res.data as ApiReturn;
+    const {success, message} = res.data as ApiReturn;
 
     if ( !success ) {
         Swal.fire({
@@ -19,7 +19,7 @@ export const login = async (loginData: Login) => {
     };
 };
 
-export const getUser = async (loginData: Login):Promise<User> => {
+export const getUser = async ():Promise<User> => {
     const res = await apiClient.post('/api/v1/user');
     const {success, data, message} = res.data as ApiReturn;
 
@@ -43,7 +43,7 @@ export const logout = async () => {
     const initUserStore = userStore.getState().initUser;
 
     const res = await apiClient.post('/api/v1/logout', {});
-    const {success, data, message} = res.data as ApiReturn;
+    const {success, message} = res.data as ApiReturn;
 
     if ( !success ) {
         Swal.fire({

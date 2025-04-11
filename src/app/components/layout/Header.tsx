@@ -3,7 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import Manage from '@/components/user/Manage';
-import { Nav, NavDropdown, Navbar, Container, NavbarToggle, NavbarCollapse, NavLink } from 'react-bootstrap';
+import { Nav, NavDropdown, Navbar, Container } from 'react-bootstrap';
 
 
 const Header = () => {

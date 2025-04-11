@@ -1,6 +1,6 @@
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import Swal from 'sweetalert2';
-import { logout, refreshToken } from './user/manage';
+import { refreshToken } from './user/manage';
 import { userStore } from '@/stores/userStore';
 import { ApiReturn } from '../types/common/common';
 
@@ -27,7 +27,7 @@ apiClient.interceptors.response.use(response=>response
                 case "T-002":// access token 만료
                     const res = await refreshToken();
 
-                    const {success, data, message} = res as ApiReturn;
+                    const {success} = res as ApiReturn;
                     
                     if ( success ) {
                         return apiClient(originalRequest);
