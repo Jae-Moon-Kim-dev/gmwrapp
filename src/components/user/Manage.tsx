@@ -56,7 +56,7 @@ const Manage = ():ReactNode => {
 
     return <>
         <div>
-            { !!userStoreData.email ? 
+            { !!userStoreData.mem_id ? 
                 (<>
                     <Dropdown>
                         <DropdownButton variant='primary' title={userStoreData.name} >

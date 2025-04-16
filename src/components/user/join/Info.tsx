@@ -9,18 +9,19 @@ import dayjs from 'dayjs';
 import { TabContext } from '@/context/TabProvider';
 import { Controller, FieldPath, useForm, useWatch } from 'react-hook-form';
 import useDay from '@/hooks/user/useDay';
-import CommonModal from '@/components/common/Modal';
 import { InfoData, initInfoData } from '@/app/types/user/user';
+import Swal from 'sweetalert2';
+import apiClient from '@/app/api/common';
 
 const Info = ({ className }: { className: string }): ReactNode => {
-	const { setTab } = useContext(TabContext);
+	const { setTab, agree, setUser } = useContext(TabContext);
 
-	const [modalShow, setModalShow] = useState<boolean>(true);
 	const [infoYear, setInfoYear] = useState<ISelectData>({ label: '년도', value: '' });
 	const [infoMonth, setInfoMonth] = useState<ISelectData>({ label: '월', value: '' });
 	const [infoDay, setInfoDay] = useState<ISelectData>({ label: '일', value: '' });
 	const [infoYear2, setInfoYear2] = useState<ISelectData>({ label: '년도', value: '' });
 	const [infoMonth2, setInfoMonth2] = useState<ISelectData>({ label: '월', value: '' });
+	const [infoDay2, setInfoDay2] = useState<ISelectData>({ label: '일', value: '' });
 
 	const dayDatas = useDay({ year: infoYear.value, month: infoMonth.value });
 	const dayDatas2 = useDay({ year: infoYear2.value, month: infoMonth2.value });
@@ -29,7 +30,7 @@ const Info = ({ className }: { className: string }): ReactNode => {
 		defaultValues: initInfoData
 	});
 
-	const { control, trigger, setValue, formState: { errors }, clearErrors, reset } = form;
+	const { control, trigger, getValues, setValue, formState: { errors }, clearErrors, reset } = form;
 	const gender1 = useWatch({
 		control,
 		name: 'gender1',
@@ -51,11 +52,90 @@ const Info = ({ className }: { className: string }): ReactNode => {
 		clearErrors();
 		const isVallid = await trigger();
 		if (isVallid) {
-			setTab('complete');
-		} else {
-			setModalShow(true);
+
+			const regExp = /[0-9a-zA-Z][_0-9a-zA-Z-]*@[_0-9a-zA-Z-]+(\.[_0-9a-zA-Z-]+){1,2}$/;
+			const { mailID, mailAddr } = getValues();
+			const email = `${mailID}@${mailAddr}`;
+
+			if ( !regExp.test(email) ) {
+				Swal.fire({
+					icon: "error",
+					text: "올바른 이메일 주소를 입력해 주세요.",
+				});
+				return;
+			}
+
+			if ( isYoungOld() && isParentOld() ) {
+				Swal.fire({
+					icon: "error",
+					text: "보호자 나이를 입력해 주세요. 보호자 연령은 20세 이상이어야 합니다.",
+				});
+				return;
+			}
+
+			Swal.fire({
+				title : "저장 하시겠습니까?",
+				icon : "question",
+				showCancelButton : true,
+				confirmButtonColor : "#444",
+				cancelButtonColor : "#888",
+				confirmButtonText : "예",
+				cancelButtonText : "아니오",
+			}).then(async (result) => {
+				if (result.value) {
+					try {
+						if (await insertMember()) {
+							setTab('complete');
+						}
+					} catch ( e ) {
+						throw e;
+					}
+				}
+			});
 		}
 	}
+
+	const handleIdCheck = useCallback(async (e:React.FocusEvent) => {
+		const { memId } = getValues();
+		if ( !memId ) return;
+
+		const { data: { data } } = await apiClient.post(`/api/v1/idCheck`,{
+			mem_id: memId,
+		});
+
+		if ( !data ) {
+			Swal.fire({
+				icon: "error",
+				text: `${memId}는 사용할수 없는 아이디 입니다.`,
+			});
+			setValue("memId", "");
+			return;
+		}
+	}, []);
+
+	const insertMember = useCallback(async ():Promise<boolean> => {
+		const { memName, mailID, mailAddr, celNum1, celNum2, celNum3, selYear1, selMonth1, selDay1, selYear2, selMonth2, selDay2, memId, memPwd, parentNm, parentCelNum1, parentCelNum2, parentCelNum3 } = getValues();
+		const { memAgr1, memAgr2 } = agree;
+		await apiClient.post(`/api/v1/register`,{
+			name: memName,
+			mem_id: memId,
+			gender1: gender1,
+			email: `${mailID}@${mailAddr}`,
+			cel_num: `${celNum1}-${celNum2}-${celNum3}`,
+			birth_date: `${selYear1}-${selMonth1}-${selDay1}`,
+			parent_nm: isYoungOld() ? parentNm : '',
+			gender2: isYoungOld() ? gender2 : '',
+			parent_birth_date: isYoungOld() ? `${selYear2}-${selMonth2}-${selDay2}`: '',
+			parent_cel_num: isYoungOld() ? `${parentCelNum1}-${parentCelNum2}-${parentCelNum3}` : '',
+			mem_agr1: memAgr1,
+			mem_agr2: memAgr2,
+			password: memPwd,
+		});
+		
+		setUser({...getValues()});
+
+		return true;
+	}, []);
 
 	const handleCombChange = (e: ISelectData, name: FieldPath<InfoData>): void => {
 		setValue(name, e.value);
@@ -111,9 +191,24 @@ const Info = ({ className }: { className: string }): ReactNode => {
 		}
 	}, [infoYear, infoMonth, infoDay]);
 
+	const isParentOld = useCallback((): boolean => {
+		const selectDate = dayjs(`${infoYear2.value}-${infoMonth2.value}-${infoDay2.value}`);
+		const pointDate = dayjs().subtract(20, 'year');
+
+		if (pointDate.isBefore(selectDate)) {
+			return true;
+		} else {
+			return false;
+		}
+	}, [infoYear2, infoMonth2, infoDay2]);
+
 	useEffect(() => {
 		isYoungOld();
 	}, [infoYear, infoMonth, infoDay, isYoungOld]);
+
+	useEffect(() => {
+		isParentOld();
+	}, [infoYear2, infoMonth2, infoDay2, isYoungOld]);
 
 	useEffect(() => {
 		if (!isYoungOld()) {
@@ -127,6 +222,18 @@ const Info = ({ className }: { className: string }): ReactNode => {
 			setValue('parentCelNum3', "");
 		}
 	}, [isYoungOld, reset]);
+
+	useEffect(() => {
+		if ( errors && !!Object.values(errors).find(error => !!error) ) {
+
+			Swal.fire({
+				icon : "error",
+				text: Object.values(errors).find(error => !!error)?.message,
+				showCloseButton: true
+			});
+			
+		}
+	}, [errors && !!Object.values(errors).find(error => !!error)]);
 
 	return <S.InfoContainer className={className} id="infoInput">
 		<S.MiddleTitle className="sct infoInp">
@@ -391,7 +498,7 @@ const Info = ({ className }: { className: string }): ReactNode => {
 											<CommonSelect {...field} width='100px' data={dayDatas2} handleChange={(e: ISelectData) => {
 												onChange(e);
 												handleCombChange(e, name);
-											}} />
+											}} setSelectValue={setInfoDay2} />
 										)}
 									/>
 									<div className='p-2' >일</div>
@@ -447,8 +554,11 @@ const Info = ({ className }: { className: string }): ReactNode => {
 									hasEngNumber: value => /^([a-zA-Z0-9-_])+$/.test(value) || "아이디는 영문, 숫자, -, _ 만 사용할 수 있습니다.",
 								}
 							}}
-							render={({ field, field: { onChange } }) => (
-								<S.InputJo {...field} type="text" onChange={onChange} id="memId" alt="아이디" />
+							render={({ field, field: { onChange, onBlur } }) => (
+								<S.InputJo {...field} type="text" onChange={onChange} onBlur={(e:React.FocusEvent)=> {
+									onBlur();
+									handleIdCheck(e);
+								}} id="memId" alt="아이디" />
 							)}
 						/>{/**onBlur={() => {}} idCheck(); */}
 					</S.Cont>
@@ -505,18 +615,6 @@ const Info = ({ className }: { className: string }): ReactNode => {
 		<S.InfoButtonWrapBox>
 			<S.InfoButton onClick={goNextPage} >입력 완료</S.InfoButton> {/**saveInfo(); */}
 		</S.InfoButtonWrapBox>
-		{
-			Object.values(errors).find(error => !!error) &&
-			<CommonModal
-				size="lg"
-				aria-labelledby="contained-modal-title-vcenter"
-				centered
-				show={modalShow}
-				onHide={() => { setModalShow(false); }}
-				body={<p className='p-3 fw-bold' >{Object.values(errors).find(error => !!error)?.message}</p>}
-				close_label='확인'
-			/>
-		}
 	</S.InfoContainer>;
 }
 

@@ -1,11 +1,12 @@
 "use client"
 
-import React, { ChangeEvent, ReactNode, useContext, useState } from 'react';
+import React, { ChangeEvent, ReactNode, useContext, useEffect, useState } from 'react';
 import * as S from '@/styles/user/join/UserAgree.styled';
 import { TabContext } from '@/context/TabProvider';
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import CommonModal from '@/components/common/Modal';
 import { initTermAgree } from '@/app/types/user/user';
+import Swal from 'sweetalert2';
 
 const Agree = ({className}:{className:string}):ReactNode => {
   const { setTab, setAgree } = useContext(TabContext);
@@ -14,7 +15,7 @@ const Agree = ({className}:{className:string}):ReactNode => {
   const form = useForm({
     defaultValues: initTermAgree,  
   });
-  const { control, setValue, getValues } = form;
+  const { control, setValue, getValues, formState: { errors }, trigger, clearErrors } = form;
   const memAgrAll = useWatch({
     control,
     name: 'memAgrAll',
@@ -40,7 +41,11 @@ const Agree = ({className}:{className:string}):ReactNode => {
         });
         setTab('info');
       } else {
-        setModalShow(true);
+        Swal.fire({
+          icon : "error",
+          text: "이용약관에 동의하셔야 합니다.",
+          showCloseButton: true,
+        });
       }
 
     };
@@ -432,15 +437,6 @@ const Agree = ({className}:{className:string}):ReactNode => {
             <S.AgreeButton onClick={()=>{history.back();}}>동의하지 않음</S.AgreeButton>
           </S.AgreeButtonWrapBox>
         </S.AgreeContainer>
-        <CommonModal 
-          size="sm"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          show={modalShow} 
-          onHide={() => { setModalShow(false); }} 
-          body={<p className='p-3 fw-bold' > 이용약관에 동의하셔야 합니다. </p>}
-          close_label='확인'
-        />
     </>;
 }
 

@@ -33,7 +33,7 @@ const Menu = () => {
     }
   });
   
-  const { getValues, reset } = menuForm;
+  const { getValues, reset, clearErrors, trigger, formState: { errors } } = menuForm;
   
   const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], fetchMenuListData); 
   const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], ({ queryKey }) => fetchMenuData(queryKey[1] as string));
@@ -76,41 +76,45 @@ const Menu = () => {
     setSaveType('new');
   }
 
-  const saveMenu = () => {
+  const saveMenu = async () => {
       const { menu_type, menu_id, parent_menu_id, menu_name, menu_url, visible_yn } = getValues();
 
-      Swal.fire({
-        title : "저장 하시겠습니까?",
-        icon : "question",
-        showCancelButton : true,
-        confirmButtonColor : "#444",
-        cancelButtonColor : "#888",
-        confirmButtonText : "예",
-        cancelButtonText : "아니오",
-      }).then((result) => {
-        if (result.value) {
-          if ( saveType === 'update' ) {
-            updateMenuMutation.mutate({
-              parent_menu_id,
-              menu_type,
-              menu_name,
-              menu_url,
-              menu_id,
-              visible_yn,
-            });
-          } else {
-            insertMenuMutation.mutate({
-              parent_menu_id,
-              menu_type,
-              menu_name,
-              menu_url,
-              menu_id,
-              visible_yn,
-            });
+      clearErrors();
+      const isVallid = await trigger();
+      if (isVallid) {
+        Swal.fire({
+          title : "저장 하시겠습니까?",
+          icon : "question",
+          showCancelButton : true,
+          confirmButtonColor : "#444",
+          cancelButtonColor : "#888",
+          confirmButtonText : "예",
+          cancelButtonText : "아니오",
+        }).then((result) => {
+          if (result.value) {
+            if ( saveType === 'update' ) {
+              updateMenuMutation.mutate({
+                parent_menu_id,
+                menu_type,
+                menu_name,
+                menu_url,
+                menu_id,
+                visible_yn,
+              });
+            } else {
+              insertMenuMutation.mutate({
+                parent_menu_id,
+                menu_type,
+                menu_name,
+                menu_url,
+                menu_id,
+                visible_yn,
+              });
+            }
           }
-        }
-  
-      });
+    
+        });
+      }
   }
 
   const deleteMenu = () => {
@@ -246,6 +250,18 @@ const Menu = () => {
       setItemId(items[0].id);
     }
   }, [items]);
+
+  useEffect(() => {
+    if ( errors && !!Object.values(errors).find(error => !!error) ) {
+
+      Swal.fire({
+        icon : "error",
+        text: Object.values(errors).find(error => !!error)?.message,
+        showCloseButton: true
+      });
+      
+    }
+  }, [errors && !!Object.values(errors).find(error => !!error)]);
 
   return (
     <motion.div

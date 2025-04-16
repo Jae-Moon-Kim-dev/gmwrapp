@@ -1,11 +1,13 @@
 "use client"
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import * as S from '@/styles/user/join/UserComplete.styled';
+import { TabContext } from '@/context/TabProvider';
 
 const Complete = ({className}:{className:string}):ReactNode => {
   const router = useRouter();
+  const { user } = useContext(TabContext);
 
   const goHomePage = () => {
     router.push("/");
@@ -13,7 +15,7 @@ const Complete = ({className}:{className:string}):ReactNode => {
 
   return <S.CompleteContainer className={className} >
     <S.TxtNote>
-    님께서는 우리교회 홈피 가입 승인 대기 중 입니다.<br />
+    {user?.memName}님께서는 우리교회 홈피 가입 승인 대기 중 입니다.<br />
         <S.TxtNoteTip>우리교회 홈피 가입 승인 운영자에게만 있습니다.</S.TxtNoteTip>
     </S.TxtNote>
     <S.ButtonWrapBox>

@@ -74,7 +74,7 @@ export const initInfoData = {
 export type User = {
     id: number,
     name: string,
-    email: string,
+    mem_id: string,
 }
 
 export type Login = {
@@ -99,7 +99,7 @@ export type UserStoreActions = {
 export const initUserData: User = {
     id: 0,
     name: '',
-    email: '',
+    mem_id: '',
 }
 
 export type UserStore = UserStoreState & UserStoreActions;

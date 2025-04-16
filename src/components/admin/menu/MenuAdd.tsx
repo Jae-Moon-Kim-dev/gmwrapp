@@ -153,10 +153,6 @@ const MenuAdd = ({items}: {items: MenuItem[] | undefined}):ReactNode => {
                 <Controller
                     name='visible_yn'
                     control={control}
-                    // rules={{ 
-                    //   required: "이름 입력하세요.",
-                    //   maxLength: { value: 10, message: "최대 10글자 이하로 입력해 주세요." }
-                    // }}
                     render={({
                     field, 
                     field: {onChange},
@@ -165,8 +161,6 @@ const MenuAdd = ({items}: {items: MenuItem[] | undefined}):ReactNode => {
                         onChange(e);
                         setValue("visible_yn", e.value);
                     }} /> 
-                    // setSelectValue={setInfoMonth2}
-                    // data={monthData()}
                     )}
                 />
                 </S.Cont>

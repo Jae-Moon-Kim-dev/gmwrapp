@@ -6,7 +6,7 @@ import { userStore } from '@/stores/userStore';
 
 export const login = async (loginData: Login) => {
     const res = await apiClient.post('/api/v1/login', {
-        email: loginData.id,
+        mem_id: loginData.id,
         password: loginData.pwd,
     });
     const {success, message} = res.data as ApiReturn;
