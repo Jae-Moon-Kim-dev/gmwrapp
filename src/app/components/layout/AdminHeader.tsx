@@ -1,41 +1,39 @@
-import React from 'react';
-import Link from "next/link";
+"use client";
+
+import React, { ReactNode } from 'react';
 import Image from 'next/image';
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { adminMenuInfo } from '@/app/types/admin/admin';
 
 const AdminHeader = () => {
+
+  const adminMenuList = () => {
+    return (adminMenuInfo.map(a => {
+        const { children } = a;
+        const childrenNode:ReactNode[] = [];
+
+        children.map(b=> {
+            childrenNode.push(<NavDropdown.Item key={b.id} href={b.url}>{b.name}</NavDropdown.Item>);
+        });
+        return <NavDropdown key={a.id} children={childrenNode} className='bg-primary' title="메뉴 관리" id="navbarScrollingDropdown1"></NavDropdown>;
+    })); 
+  }
+
   return (
-      <nav className="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-        <div className="container">
-            <Link href="/" className='navbar-brand' >
+    <Navbar expand="lg" className="bg-primary" data-bs-theme="dark">
+        <Container>
+            <Navbar.Brand href="/">
                 <Image src="/images/logo-invert.png" alt="WR" width={110} height={50} />
-            </Link>
-            <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarColor03">
-                <ul className="navbar-nav mx-5 px-5">
-                    <li className="nav-item">
-                        <Link className='nav-link active' href="/">Home
-                            <span className="visually-hidden">(current)</span>
-                        </Link>
-                    </li>
-                    <li className="nav-item dropdown">
-                        <Link href="/admin/menu" className="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">메뉴 관리</Link>
-                        <div className="dropdown-menu">
-                            <Link href="/admin/menu" className="dropdown-item">메뉴 관리</Link>
-                            <Link href="/admin/menuPerminssion" className="dropdown-item">메뉴 권한관리</Link>
-                        </div>
-                    </li>
-                    <li className="nav-item dropdown">
-                        <Link href="/admin/menu" className="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">주일강단</Link>
-                        <div className="dropdown-menu">
-                            <Link href="/admin/menu" className="dropdown-item" >주일설교</Link>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-      </nav>
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbarScroll" />
+            <Navbar.Collapse id="navbarScroll">
+                <Nav className="mx-5 px-5">
+                    <Nav.Link href="/">Home</Nav.Link>
+                    {adminMenuList()}
+                </Nav>
+            </Navbar.Collapse>
+        </Container>
+      </Navbar>
   );
 }
 export default AdminHeader;
