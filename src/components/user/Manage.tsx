@@ -34,10 +34,12 @@ const Manage = ():ReactNode => {
         const isVallid = await trigger();
 
 		if (isVallid) {
-			await login({id, pwd});
-			const user = await getUser();
-            setModalShow(false);
-            setUserStore({...user});
+            const result = await login({id, pwd});
+            if ( result ) {
+                const user = await getUser();
+                setModalShow(false);
+                setUserStore({...user});
+            }
 		}
     }, []);
 

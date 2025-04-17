@@ -5,18 +5,27 @@ import Swal from 'sweetalert2';
 import { userStore } from '@/stores/userStore';
 
 export const login = async (loginData: Login) => {
-    const res = await apiClient.post('/api/v1/login', {
-        mem_id: loginData.id,
-        password: loginData.pwd,
-    });
-    const {success, message} = res.data as ApiReturn;
-
-    if ( !success ) {
-        Swal.fire({
-            icon: "error",
-            text: message
+    try {
+        const res = await apiClient.post('/api/v1/login', {
+            mem_id: loginData.id,
+            password: loginData.pwd,
         });
-    };
+
+        if ( res ) {
+            const {success, message} = res.data as ApiReturn;
+        
+            if ( !success ) {
+                Swal.fire({
+                    icon: "error",
+                    text: message
+                });
+            };
+
+            return success;
+        }
+    } catch (e) {
+        console.log('error', e);
+    }
 };
 
 export const getUser = async ():Promise<User> => {

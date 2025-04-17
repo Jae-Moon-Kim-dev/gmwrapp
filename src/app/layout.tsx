@@ -4,6 +4,7 @@ import StyledComponentsRegistry from '../lib/StyledComponentsRegistry';
 import { Geist, Geist_Mono } from "next/font/google";
 import 'bootswatch/dist/flatly/bootstrap.min.css';
 import ReactQueryProviders from '../utils/react-query-provider';
+import Loading from './loading';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +31,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ReactQueryProviders>
           <StyledComponentsRegistry>
+            <Loading />
             {children}
           </StyledComponentsRegistry>
         </ReactQueryProviders>

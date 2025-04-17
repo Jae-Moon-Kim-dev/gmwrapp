@@ -3,14 +3,24 @@ import Swal from 'sweetalert2';
 import { refreshToken } from './user/manage';
 import { userStore } from '@/stores/userStore';
 import { ApiReturn } from '../types/common/common';
+import { loadingStore } from '@/stores/loadingStore';
 
 const apiClient = axios.create({
     baseURL: `${process.env.NEXT_PUBLIC_API_DOMAIN}`,
     withCredentials: true,
-}); 
+});
 
-apiClient.interceptors.response.use(response=>response
+apiClient.interceptors.request.use((config)=> {
+    loadingStore.getState().setLoading(true);
+    return config;
+});
+
+apiClient.interceptors.response.use(response=> {
+    loadingStore.getState().setLoading(false);
+        return response;
+    }
     , async (error) => {
+        loadingStore.getState().setLoading(false);
         const originalRequest = error.config;
         
         if ( error.response ) {
@@ -50,8 +60,8 @@ apiClient.interceptors.response.use(response=>response
                     });
                     break;
             }
-        
         }
+        return error;
     }
 );
 

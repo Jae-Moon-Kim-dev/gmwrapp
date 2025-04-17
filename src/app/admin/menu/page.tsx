@@ -279,7 +279,7 @@ const Menu = () => {
         <hr/>
         <div className='row' >
           <div className='col-6 p-3'>
-            {isLoading ? <Loading /> : 
+            {isLoading ? <Loading isLoading={isLoading} /> : 
             <Box sx={{ minHeight: 352, minWidth: 250 }}>
                 { menuItems && <RichTreeView items={menuItems} selectedItems={itemId} onItemClick={(_, itemId) => handleClickMenuItem(itemId)} />}
             </Box>}

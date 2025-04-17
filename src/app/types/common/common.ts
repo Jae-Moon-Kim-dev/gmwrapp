@@ -17,3 +17,13 @@ export type ApiReturn = {
     message?: string,
     data?: unknown,
 }
+
+export type LoadingStoreActions = {
+    setLoading: (loading: LoadingStoreState['isLoading']) => void,
+}
+
+export type LoadingStoreState = {
+    isLoading: boolean,
+}
+
+export type LoadingStore = LoadingStoreState & LoadingStoreActions;
