@@ -9,13 +9,13 @@ const AdminHeader = () => {
 
   const adminMenuList = () => {
     return (adminMenuInfo.map(a => {
-        const { children } = a;
+        const { id, name, children } = a;
         const childrenNode:ReactNode[] = [];
 
         children.map(b=> {
             childrenNode.push(<NavDropdown.Item key={b.id} href={b.url}>{b.name}</NavDropdown.Item>);
         });
-        return <NavDropdown key={a.id} children={childrenNode} className='bg-primary' title="메뉴 관리" id="navbarScrollingDropdown1"></NavDropdown>;
+        return <NavDropdown key={id} children={childrenNode} className='bg-primary' title={name} id={`navbarScrollingDropdown${id}`}></NavDropdown>;
     })); 
   }
 
