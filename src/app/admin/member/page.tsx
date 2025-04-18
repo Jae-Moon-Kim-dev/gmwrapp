@@ -1,9 +1,14 @@
 "use client";
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { handleSelectedMenu } from '@/utils/admin/utils';
 
 const Member = () => {
+  
+  useEffect(()=> {
+    handleSelectedMenu('/admin/member');
+  }, []);
 
   return (
     <motion.div

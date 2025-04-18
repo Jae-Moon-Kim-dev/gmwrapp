@@ -1,15 +1,57 @@
 "use client";
 
-import { adminMenuInfo } from '@/app/types/admin/admin';
-import React, { ReactNode } from 'react';
+import { AdminMenu, initAdminMenu } from '@/app/types/common/common';
+import { adminMenuStore } from '@/stores/adminMenuStore';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Container, ListGroup, Nav, Navbar, NavDropdown } from 'react-bootstrap';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const Sidebar = () => {
+    const adminMenu = adminMenuStore((state) => state.menu);
+    const setAdminMenu = adminMenuStore((state) => state.setMenu);
+    const router = useRouter();
+
+    const handleSelectedMenu = (url: string | undefined) => {
+        let adminMenuChildren:AdminMenu[] = [];
+
+        adminMenuChildren = adminMenu.children.map(a=> {
+            if ( a.url === url ) {
+                return {
+                    ...a,
+                    active: true,
+                }
+            } else {
+                return {
+                    ...a,
+                    active: false,
+                }
+            }
+        });
+
+        setAdminMenu({
+            ...adminMenu,
+            children: adminMenuChildren,
+        });
+
+        if (url) router.push(url);
+    };
+
+    const sideMenuList = () => {
+        const listItem:ReactNode[] = [];
+        
+        adminMenu.children.forEach(a => {
+            listItem.push(<ListGroup.Item key={a.id} onClick={()=> {handleSelectedMenu(a.url);}} active={a.active} as="li"><Link href={a.url ? a.url : '#'} >{a.name}</Link></ListGroup.Item>);
+        });
+
+        return listItem;
+    };
 
     return <Container className='mt-5 px-5' >
-    <ListGroup as="ul" >
-        <ListGroup.Item variant='primary' as="li">메뉴 관리</ListGroup.Item>
-        <ListGroup.Item variant='primary' as="li">메뉴 권한 관리</ListGroup.Item>
+    <ListGroup as="ul">
+        {
+            adminMenu.children && sideMenuList()
+        }
     </ListGroup>
     </Container>;
 }

@@ -27,3 +27,44 @@ export type LoadingStoreState = {
 }
 
 export type LoadingStore = LoadingStoreState & LoadingStoreActions;
+
+export type AdminMenu = {
+    id: number;
+    name: string;
+    url?: string;
+    active: boolean;
+    children: AdminMenu[];
+};
+
+export const initAdminMenu: AdminMenu = {
+    id: 1,
+    name: '메뉴 관리',
+    url: '',
+    active: true,
+    children: [
+        {
+            id: 2,
+            name: '메뉴 관리',
+            url: '/admin/menu',
+            active: true,
+            children: [],
+        },
+        {
+            id: 3,
+            name: '메뉴 권한 관리',
+            url: '/admin/menuPermission',
+            active: false,
+            children: [],
+        },
+    ],
+};
+
+export type AdminMenuStoreActions = {
+    setMenu: (menu: AdminMenuStoreState['menu']) => void,
+}
+
+export type AdminMenuStoreState = {
+    menu: AdminMenu,
+}
+
+export type AdminMenuStore = AdminMenuStoreState & AdminMenuStoreActions;

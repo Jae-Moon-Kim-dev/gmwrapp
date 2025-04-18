@@ -4,18 +4,24 @@ import Link from 'next/link';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import CommonModal from '../common/Modal';
-import { Container, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Container, Row, Col, Dropdown, DropdownButton, Button, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import * as S from '@/styles/user/login/UserLogin.styled';
 import { initLoginData } from '@/app/types/user/user';
 import { getUser, login, logout } from '@/app/api/user/manage';
 import Swal from 'sweetalert2';
 import { userStore } from '@/stores/userStore';
+import { useRouter } from 'next/navigation';
 
 const Manage = ():ReactNode => {
 
+    const router = useRouter();
     const [modalShow, setModalShow] = useState<boolean>(false);
     const userStoreData = userStore((state) => state.user); 
     const setUserStore = userStore((state) => state.setUser);
+
+    const nextPage = ( url:string ) => {
+        router.push(url);
+    };
 
     const form = useForm({
         defaultValues: initLoginData,
@@ -57,28 +63,31 @@ const Manage = ():ReactNode => {
     }, [Object.values(errors).find(error => !!error)]);
 
     return <>
-        <div>
+        <Navbar className="bg-primary" data-bs-theme="dark">
+            <Container>
+                <Navbar.Toggle aria-controls="navbarScroll" />
+                <Navbar.Collapse id="navbarScroll">
+                    <Nav className="nav-pills">
             { !!userStoreData.mem_id ? 
                 (<>
-                    <Dropdown>
-                        <DropdownButton variant='primary' title={userStoreData.name} >
-                            <Dropdown.Item href="/admin/menu" >운영자 모드</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item href='/'>회원정보 </Dropdown.Item>
-                            <Dropdown.Item onClick={handleShowLogout} >로그아웃</Dropdown.Item>
-                        </DropdownButton>
-                    </Dropdown>
+                        <NavDropdown data-bs-theme="light" title={userStoreData.name} id={`navbarScrollingDropdown10`}>
+                            <NavDropdown.Item onClick={() => {nextPage('/admin/menu');}}>운영자 모드</NavDropdown.Item>
+                            <NavDropdown.Divider />
+                            <NavDropdown.Item onClick={() => {nextPage('/');}}>회원정보</NavDropdown.Item>
+                            <NavDropdown.Item onClick={handleShowLogout}>로그아웃</NavDropdown.Item>
+                        </NavDropdown>
                 </>)
                 :
                 (<>
-                    <button type="button" onClick={handleShowLogin} className="btn btn-link">로그인</button>
-                    |
-                    <Link href="/user/join">
-                        회원가입
-                    </Link>
+                        <Nav.Link onClick={handleShowLogin} href='#'>로그인</Nav.Link>
+                        <Nav.Link href='#' ><span className='text-light'> | </span></Nav.Link>
+                        <Nav.Link onClick={()=> {nextPage('/user/join');}} href='#'>회원가입</Nav.Link>
                 </>)
             }
-        </div>
+                    </Nav>
+                </Navbar.Collapse>
+            </Container>
+        </Navbar>
         <CommonModal
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"

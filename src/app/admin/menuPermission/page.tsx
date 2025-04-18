@@ -1,9 +1,14 @@
 "use client";
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
+import { handleSelectedMenu } from '@/utils/admin/utils';
 
-const Menu = () => {
+const MenuPermission = () => {
+  
+  useEffect(()=> {
+    handleSelectedMenu('/admin/menuPermission');
+  }, []);
 
   return (
     <motion.div
@@ -15,7 +20,7 @@ const Menu = () => {
       <div className="container" >
         <ol className="breadcrumb mt-4">
           <li className="breadcrumb-item"><Link href="/" >Home</Link></li>
-          <li className="breadcrumb-item"><Link href="/admin/menu/">메뉴 관리</Link></li>
+          <li className="breadcrumb-item"><Link href="/admin/menu">메뉴 관리</Link></li>
           <li className="breadcrumb-item active">메뉴 권한 관리</li>
         </ol>
         <hr/>
@@ -29,4 +34,4 @@ const Menu = () => {
   );
 }
 
-export default Menu;
+export default MenuPermission;
