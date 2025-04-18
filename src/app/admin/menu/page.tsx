@@ -13,11 +13,15 @@ import { useQueryResult } from '@/hooks/useQueryResult';
 import Swal from 'sweetalert2';
 import MenuEdit from '@/components/admin/menu/MenuEdit';
 import MenuAdd from '@/components/admin/menu/MenuAdd';
+import { handleSelectedMenu } from '@/utils/admin/utils';
+import { Breadcrumb } from 'react-bootstrap';
+import { useRouter } from 'next/navigation';
 
 const Box = dynamic(() => import('@mui/material/Box'), { ssr: false });
 
 const Menu = () => {
 
+  const router = useRouter();
   const [itemId, setItemId] = useState<string>("");
   const [saveType, setSaveType] = useState<MenuSaveType>('update');
   const queryClient = useQueryClient();
@@ -244,6 +248,10 @@ const Menu = () => {
     });
   }
 
+  const nextPage = (url:string) => {
+    router.push(url);
+  }
+
   useEffect(() => {
     if ( items && items.length > 0 ) {
       setMenuItems(items);
@@ -263,6 +271,10 @@ const Menu = () => {
     }
   }, [errors && !!Object.values(errors).find(error => !!error)]);
 
+  useEffect(()=> {
+    handleSelectedMenu('/admin/menu');
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -271,11 +283,11 @@ const Menu = () => {
       transition={{ duration: 0.5 }}
     >
       <div className="container" >
-        <ol className="breadcrumb mt-4">
-          <li className="breadcrumb-item"><Link href="/" >Home</Link></li>
-          <li className="breadcrumb-item"><Link href="/admin/menu/">메뉴 관리</Link></li>
-          <li className="breadcrumb-item active">메뉴 관리</li>
-        </ol>
+        <Breadcrumb className="mt-4">
+          <Breadcrumb.Item href='#' onClick={()=>{nextPage("/");}} >Home</Breadcrumb.Item>
+          <Breadcrumb.Item href='#' onClick={()=>{nextPage("/admin/menu");}}>메뉴 관리</Breadcrumb.Item>
+          <Breadcrumb.Item active>메뉴 관리</Breadcrumb.Item>
+        </Breadcrumb>
         <hr/>
         <div className='row' >
           <div className='col-6 p-3'>
