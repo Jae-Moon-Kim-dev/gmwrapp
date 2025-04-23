@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import Image from 'next/image';
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
 import { adminMenuInfo } from '@/app/types/admin/admin';
@@ -64,6 +64,10 @@ const AdminHeader = () => {
         setAdminMenu(selectedMenu);
     }
   }
+
+  useEffect(() => {
+
+  }, []);
 
   return (
     <Navbar expand="lg" className="bg-primary" data-bs-theme="dark">

@@ -5,7 +5,7 @@ import CommonSelect from '@/components/common/Select';
 import { ISelectData } from '@/app/types/common/select';
 import { fetchMenuTypeData, fetchVisibleData } from '@/app/api/admin/menu';
 import { useQueryResult } from '@/hooks/useQueryResult';
-import { MenuItemApiData } from '@/app/types/admin/menu/menu';
+import { MenuItemApiData } from '@/app/types/admin/menu';
 
 
 const MenuEdit = ({item}: {item:MenuItemApiData | undefined}):ReactNode => {

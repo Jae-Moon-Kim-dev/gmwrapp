@@ -1,6 +1,6 @@
 "use client";
 
-import { MenuDeleteData, MenuItem, MenuItemApiData, MenuUpdateData } from "@/app/types/admin/menu/menu";
+import { MenuDeleteData, MenuItem, MenuItemApiData, MenuUpdateData } from "@/app/types/admin/menu";
 import { ISelectData } from "@/app/types/common/select";
 import apiClient from "../common";
 import { ApiReturn } from "@/app/types/common/common";

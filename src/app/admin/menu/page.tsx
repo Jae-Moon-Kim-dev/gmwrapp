@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { MenuItem, MenuItemApiData, MenuOrderGubun, MenuSaveType } from '@/app/types/admin/menu/menu';
+import { MenuItem, MenuItemApiData, MenuOrderGubun, MenuSaveType } from '@/app/types/admin/menu';
 import dynamic from "next/dynamic";
 import Loading from '@/app/loading';
 import { FormProvider, useForm } from 'react-hook-form';

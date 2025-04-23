@@ -5,7 +5,7 @@ import CommonSelect from '@/components/common/Select';
 import { ISelectData } from '@/app/types/common/select';
 import { fetchMenuTypeData, fetchVisibleData } from '@/app/api/admin/menu';
 import { useQueryResult } from '@/hooks/useQueryResult';
-import { MenuItem } from '@/app/types/admin/menu/menu';
+import { MenuItem } from '@/app/types/admin/menu';
 
 
 const MenuAdd = ({items}: {items: MenuItem[] | undefined}):ReactNode => {
