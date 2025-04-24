@@ -10,6 +10,7 @@ import { fetchMemberListData } from '@/app/api/admin/member';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import { usePagination } from '@/hooks/usePagination';
 import { Pagination } from '@/app/types/common/table';
+import { Col, Form, Row } from 'react-bootstrap';
 
 const Member = () => {
 
@@ -80,6 +81,21 @@ const Member = () => {
         <hr/>
         <div className='row' >
           <div className='col p-3'>
+            <Row>
+              <Col xs={2} >
+                <Form.Select></Form.Select>
+              </Col>
+              <Col xs={3} >
+                <Form.Select></Form.Select>
+              </Col>
+              <Col xs={3} >
+                <Form.Select></Form.Select>
+              </Col>
+              <Col xs={4} >
+                <Form.Select></Form.Select>
+              </Col>
+            </Row>
+            
             <PaginationTable<MemberData>
                 columns={columns}
                 data={item && item.member_list as MemberData[] || []}
