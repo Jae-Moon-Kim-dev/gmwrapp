@@ -25,34 +25,28 @@ const PaginationTable = <T extends object>( {
 
 
     const getPaginationNode = ():ReactNode => {
-        const { pageIndex, pageSize } = pagination;
         const currPageSize = tanstackTable.getState().pagination.pageIndex +1;
-        let currStartPage = (currPageSize % pageSize === 0) ? Math.floor((currPageSize-1) / pageSize + 1) : Math.floor(currPageSize / pageSize + 1);
-        let currEndPag = (currPageSize % pageSize === 0) ? currPageSize : 
-        
-        console.log('currPageSize', currPageSize);
-        console.log('currStartPage', currStartPage);
+        const endPage = tanstackTable.getPageCount();
+        const startPageSize = (currPageSize > endPage-5) ? (endPage-5) : (currPageSize < 6) ? 1 : (currPageSize -2);
+        const endPageSize = currPageSize === endPage ? endPage : currPageSize +3;
 
         const paginationNode:ReactNode[] = [];
 
-        paginationNode.push(<Pagination.First onClick={() => {tanstackTable.setPageIndex(0)}} />);
-        paginationNode.push(<Pagination.Prev onClick={() => {tanstackTable.previousPage()}} />);
-        // <Pagination.Ellipsis />
-        for ( currStartPage; currStartPage < currPageSize; currStartPage++ ) {
-            console.log(currStartPage);
+        paginationNode.push(<Pagination.First key={'first'} disabled={ currPageSize === 1 } onClick={() => {tanstackTable.firstPage()}} />);
+        paginationNode.push(<Pagination.Prev key={'prev'} disabled={ currPageSize === 1 } onClick={() => {tanstackTable.previousPage()}} />);
+        paginationNode.push(<Pagination.Item key={`page-1`} active={1 === currPageSize} onClick={() => {tanstackTable.setPageIndex(0)}} >{1}</Pagination.Item>);
+        if ( currPageSize > 5 ) paginationNode.push(<Pagination.Ellipsis key={"ellipsis-start"} disabled={ currPageSize < 6 } active={false} onClick={() =>tanstackTable.setPageIndex(currPageSize-3)} />);
+
+        for ( let i=(startPageSize-1); i < endPageSize; i++ ) {
+            if ( (i+1) > 1 && (i+1) < endPage ) paginationNode.push(<Pagination.Item key={`page-${i+1}`} active={(i+1) === currPageSize} onClick={() => {tanstackTable.setPageIndex(i)}} >{i+1}</Pagination.Item>); 
         }
-
-        // for ( let i=0; i < currPageSize; i++ ) {
-        //     paginationNode = <>
-        //         <Pagination.First />
-        //         <Pagination.Prev />
-        //         <Pagination.Item>{startPage}</Pagination.Item>
-        //         if ()
-
-        //     </>;
-        // }
-
-        return <></>;
+    
+        if ( currPageSize < (endPage-4)) paginationNode.push(<Pagination.Ellipsis key={"ellipsis-end"} disabled={ currPageSize > endPage-5 } onClick={() =>tanstackTable.setPageIndex(currPageSize+3)} />);
+        if ( endPage > 1 ) paginationNode.push(<Pagination.Item key={`page-${endPage}`} active={endPage === currPageSize} onClick={() => {tanstackTable.setPageIndex(endPage-1)}} >{endPage}</Pagination.Item>);
+        paginationNode.push(<Pagination.Next key={'next'} disabled={ currPageSize === endPage } onClick={() => {tanstackTable.nextPage()}} />);
+        paginationNode.push(<Pagination.Last key={'last'} disabled={ currPageSize === endPage } onClick={() => {tanstackTable.setPageIndex(endPage-1)}} />);
+        
+        return paginationNode;
     }
 
     return <>
@@ -61,7 +55,7 @@ const PaginationTable = <T extends object>( {
             {tanstackTable.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
                 {headerGroup.headers.map(header => (
-                <th key={header.id}>
+                <th key={header.id} className='text-center' >
                     {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -85,22 +79,8 @@ const PaginationTable = <T extends object>( {
             ))}
         </tbody>
     </Table>
-    <Pagination  >
+    <Pagination key={'pagination'} className='d-flex justify-content-center' >
         {getPaginationNode()}
-        <Pagination.First onClick={() => {tanstackTable.setPageIndex(0)}} />
-        <Pagination.Prev onClick={() => {tanstackTable.previousPage()}} />
-        <Pagination.Item onClick={() => {tanstackTable.setPageIndex(0)}} >{1}</Pagination.Item>
-        <Pagination.Ellipsis />
-        <Pagination.Item onClick={() => {tanstackTable.setPageIndex(4)}} >{5}</Pagination.Item>
-        <Pagination.Item onClick={() => {tanstackTable.setPageIndex(5)}}>{6}</Pagination.Item>
-        <Pagination.Item onClick={() => {tanstackTable.setPageIndex(6)}} active>{7}</Pagination.Item>
-        <Pagination.Item onClick={() => {tanstackTable.setPageIndex(7)}} >{8}</Pagination.Item>
-        <Pagination.Item onClick={() => {tanstackTable.setPageIndex(8)}} >{9}</Pagination.Item>
-
-        <Pagination.Ellipsis />
-        <Pagination.Item onClick={() => {tanstackTable.setPageIndex(9)}}>{10}</Pagination.Item>
-        <Pagination.Next onClick={() => {tanstackTable.nextPage()}} />
-        <Pagination.Last />        
     </Pagination>
     </>;
 };
