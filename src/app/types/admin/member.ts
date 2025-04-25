@@ -14,3 +14,9 @@ export interface MemberApiData {
     member_list: MemberData[],
     total_cnt: number,
 }
+
+export type SearchQuery = {
+    role_id: string;
+    searchParam: string;
+    searchText: string;
+}

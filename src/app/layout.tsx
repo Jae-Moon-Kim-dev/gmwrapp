@@ -2,7 +2,7 @@ import React from 'react';
 import type { Metadata } from "next";
 import StyledComponentsRegistry from '../lib/StyledComponentsRegistry';
 import { Geist, Geist_Mono } from "next/font/google";
-import 'bootswatch/dist/flatly/bootstrap.min.css';
+import 'bootswatch/dist/sandstone/bootstrap.min.css';
 import ReactQueryProviders from '../utils/react-query-provider';
 import Loading from './loading';
 

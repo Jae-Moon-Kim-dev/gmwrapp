@@ -21,7 +21,7 @@ const AdminHeader = () => {
         children.map(b=> {
             childrenNode.push(<NavDropdown.Item key={b.id} onClick={()=> {nextPage(b.url);}} eventKey={b.url}>{b.name}</NavDropdown.Item>);
         });
-        return <NavDropdown key={id} children={childrenNode} data-bs-theme="light" title={name} id={`navbarScrollingDropdown${id}`}></NavDropdown>;
+        return <NavDropdown key={id} children={childrenNode} data-bs-theme="light" className='text-light' title={name} id={`navbarScrollingDropdown${id}`}></NavDropdown>;
     })); 
   }
 
@@ -77,7 +77,7 @@ const AdminHeader = () => {
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
-                <Nav className="nav-pills mx-5 px-5" onSelect={(sel) => {handleSelectedMenu(sel);}}>
+                <Nav className="mx-5 px-5" onSelect={(sel) => {handleSelectedMenu(sel);}}>
                     <Nav.Link onClick={()=> {nextPage("/");}} href="#">Home</Nav.Link>
                     {adminMenuList()}
                 </Nav>

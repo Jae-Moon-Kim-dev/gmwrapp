@@ -79,7 +79,7 @@ const PaginationTable = <T extends object>( {
             ))}
         </tbody>
     </Table>
-    <Pagination key={'pagination'} className='d-flex justify-content-center' >
+    <Pagination key={'pagination'} className='d-flex justify-content-center'>
         {getPaginationNode()}
     </Pagination>
     </>;

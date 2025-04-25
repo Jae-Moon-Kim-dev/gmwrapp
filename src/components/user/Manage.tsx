@@ -67,7 +67,7 @@ const Manage = ():ReactNode => {
             <Container>
                 <Navbar.Toggle aria-controls="navbarScroll" />
                 <Navbar.Collapse id="navbarScroll">
-                    <Nav className="nav-pills">
+                    <Nav>
             { !!userStoreData.mem_id ? 
                 (<>
                         <NavDropdown data-bs-theme="light" title={userStoreData.name} id={`navbarScrollingDropdown10`}>

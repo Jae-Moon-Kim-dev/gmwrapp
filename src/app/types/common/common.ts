@@ -59,6 +59,25 @@ export const initAdminMenu: AdminMenu = {
     ],
 };
 
+export const memberSearchParam = [
+    {
+        label: '이름',
+        value: 'name',
+    },
+    {
+        label: '아이디',
+        value: 'mem_id',
+    },
+    {
+        label: '이메일',
+        value: 'email',
+    },
+    {
+        label: '휴대폰번호',
+        value: 'cel_num',
+    },
+]
+
 export type AdminMenuStoreActions = {
     setMenu: (menu: AdminMenuStoreState['menu']) => void,
 }
