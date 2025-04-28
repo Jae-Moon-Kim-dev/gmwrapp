@@ -15,4 +15,5 @@ export interface PagenationTableProps<T extends object> {
     total: number,
     onPaginationChange: React.Dispatch<React.SetStateAction<Pagination>>,
     pagination: Pagination,
+    children?: React.ReactNode,
 }

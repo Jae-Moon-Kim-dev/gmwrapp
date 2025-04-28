@@ -2,7 +2,7 @@
 
 import apiClient from "../common";
 import { ApiReturn } from "@/app/types/common/common";
-import { MemberApiData, SearchQuery } from "@/app/types/admin/member";
+import { MemberApiData, MemberData, SearchQuery } from "@/app/types/admin/member";
 import { Pagination } from "@/app/types/common/table";
 import { ISelectData } from "@/app/types/common/select";
 
@@ -28,3 +28,19 @@ export const fetchRoleListData = async ():Promise<ISelectData[]> => {
   
   return data as Promise<ISelectData[]>;
 };
+
+export const updateMemberRole = async ({roleMembers}: {roleMembers: MemberData[]}) => {
+  await apiClient.post('/api/admin/member/updateMemberRole', {
+    roleMembers: roleMembers,
+  });
+
+  return true;
+};
+
+export const deleteMember = async ({deleteMembers}: {deleteMembers: MemberData[]}) => {
+  await apiClient.post('/api/admin/member/deleteMember', {
+    deleteMembers: deleteMembers,
+  });
+
+  return true;
+}

@@ -11,6 +11,7 @@ const PaginationTable = <T extends object>( {
     total,
     onPaginationChange,
     pagination,
+    children,
 } : PagenationTableProps<T> ):ReactNode => {
     const tanstackTable = useReactTable({ 
         data, 
@@ -79,6 +80,7 @@ const PaginationTable = <T extends object>( {
             ))}
         </tbody>
     </Table>
+    { children && children }
     <Pagination key={'pagination'} className='d-flex justify-content-center'>
         {getPaginationNode()}
     </Pagination>

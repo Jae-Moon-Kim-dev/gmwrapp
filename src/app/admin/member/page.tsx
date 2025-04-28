@@ -1,12 +1,12 @@
 "use client";
 import { motion } from 'framer-motion';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { handleSelectedMenu } from '@/utils/admin/utils';
 import PaginationTable from '@/components/common/PaginationTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { MemberApiData, MemberData, SearchQuery } from '@/app/types/admin/member';
-import { fetchMemberListData, fetchRoleListData } from '@/app/api/admin/member';
+import { deleteMember, fetchMemberListData, fetchRoleListData, updateMemberRole } from '@/app/api/admin/member';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import { usePagination } from '@/hooks/usePagination';
 import { Pagination } from '@/app/types/common/table';
@@ -14,17 +14,18 @@ import { Button, Col, Form, Row } from 'react-bootstrap';
 import { ISelectData } from '@/app/types/common/select';
 import { memberSearchParam } from '@/app/types/common/common';
 import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const Member = () => {
-
-  
   const { pagination, onPaginationChange, onPageSizeChange } = usePagination();
+  const queryClient = useQueryClient();
+
   const [ searchQuery, setSearchQuery ] = useState<SearchQuery>({
     role_id: '',
     searchParam: '',
     searchText: '',
   });
-  
+
   const searchForm = useForm({
     defaultValues: {
       role_id: '',
@@ -34,11 +35,85 @@ const Member = () => {
   });
   
   const { control, getValues, setValue } = searchForm;
-
+  
   const { data: item, refetch } = useQueryResult<MemberApiData>(['adminMemberListData', pagination, searchQuery], useCallback(async ({ queryKey }) => await fetchMemberListData(queryKey[1] as Pagination, queryKey[2] as SearchQuery), []));
   const { data: roleItems } = useQueryResult<ISelectData[]>(['roleListData'], useCallback(async () => await fetchRoleListData(), []));
+  
+  const updateMemberRoleMutation = useMutation({
+    mutationFn: updateMemberRole,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminMemberListData'] });
+    }
+  });
+
+  const deleteMemberMutation = useMutation({
+    mutationFn: deleteMember,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminMemberListData'] });
+    }
+  });
+
+  const [memberList, setMemberList] = useState<MemberData[]>([]);
+  const [selectedRole, setSelectedRole] = useState<ISelectData>();
+
+  const handleUpdateMemberRoleData = () => {
+    if ( selectedRole && memberList.filter(a => a.chkMember) ) {
+      const updateMemberRole = memberList.filter(a => a.chkMember).map(a => {
+        return {
+          ...a,
+          role_id: parseInt(selectedRole?.value),
+        }
+      });
+
+      if ( updateMemberRole && !!updateMemberRole.length ) {
+        updateMemberRoleMutation.mutate({
+          roleMembers: updateMemberRole,
+        });
+      }
+    }
+  };
+
+  const handleDeleteMemberData = () => {
+    if ( memberList.filter(a => a.chkMember) && !!memberList.filter(a => a.chkMember).length ) {
+      deleteMemberMutation.mutate({
+        deleteMembers: memberList.filter(a => a.chkMember),
+      });
+    }
+  };
 
   const columns: ColumnDef<MemberData>[] = [
+      {
+        accessorKey: 'chkMember',
+        id: 'chkMember', 
+        header: '선택',
+        cell: ({ getValue, row, column, table }) => {
+          const initialValue = (getValue() || false) as boolean;
+          const [ chkValue, setChkValue ] = useState<boolean>(initialValue);
+
+          return <>
+            <div className='text-center'>
+              <input type="checkbox" id='chkMember' className='form-check-input' checked={chkValue} onChange={(e:React.ChangeEvent<HTMLInputElement>) => {
+                setChkValue(e.target.checked);
+                if ( item && item.member_list && (!!item.member_list.length) ) {
+                  const member = item.member_list.find((_,idx) => idx === row.index);
+                  if ( member ) {
+                    setMemberList(memberList.map(a => {
+                      if ( a.mem_id === member.mem_id ) {
+                        return {
+                          ...a,
+                          chkMember: e.target.checked,
+                        }
+                      }
+
+                      return a;
+                    }));
+                  }
+                }
+              }} />
+            </div>
+          </>;
+        }
+      },
       {
         accessorKey: 'rownum',
         id: 'rownum', 
@@ -80,15 +155,109 @@ const Member = () => {
     setSearchQuery(getValues());
   }
 
+  const getChangeMemberNode = () => {
+    return <>
+      <div className='d-flex' >
+        <div className='pt-2 px-1' >
+          선택한 회원을
+        </div>
+        <div className='px-1' >
+          <Form.Select key='selectedRole' onChange={e => {
+            setSelectedRole({
+              label: e.target.options[e.target.selectedIndex].text,
+              value: e.target.value,
+            });
+          }} >
+            {roleItems && roleItems.filter(a => a.label !== '비회원').map((a, idx) => {
+              const maxRoleItem = roleItems.reduce((a, b) => {
+                return a.value > b.value ? a: b;
+              });
+              if ( a.label === '운영자') {
+                return {
+                  ...a,
+                  order: parseInt(maxRoleItem.value)+1,
+                }
+              }
+              if ( a.label === '부운영자') {
+                return {
+                  ...a,
+                  order: parseInt(maxRoleItem.value)+2,
+                }
+              } else {
+                return {
+                  ...a,
+                  order: a.value
+                }
+              }
+
+            }).sort((a, b) => {
+              if ( a.order < b.order ) {
+                return -1;
+              } else if ( a.order > b.order ) {
+                return 1;
+              }
+              return 0;
+            }).map(a => {
+              const { value, label } = a;
+              return <option key={`selectedRole_${value}`} value={value}>{label}</option>;
+            })}
+          </Form.Select>
+        </div>
+        <div className='px-1' >
+          <Button type="button" onClick={() => {handleUpdateMemberRoleData();}} >변경</Button>
+        </div>
+        <div className='px-1' >
+          <Button type="button" onClick={() => {handleDeleteMemberData();}} >삭제</Button>
+        </div>
+      </div>
+    </>;
+  }
+
   useEffect(()=> {
     handleSelectedMenu('/admin/member');
   }, []);
 
   useEffect(() => {
     if (item && item['member_list'] && !!item['member_list'].length) {
-      console.log(item);
+      setMemberList(item['member_list']);
     }
-  }, [(item && item['member_list'] && !!item['member_list'].length)]);
+  }, [item]);
+
+  useEffect(() => {
+    if ( roleItems && !!roleItems.length ) {
+      setSelectedRole(roleItems.filter(a => a.label !== '비회원').map((a, idx) => {
+        const maxRoleItem = roleItems.reduce((a, b) => {
+          return a.value > b.value ? a: b;
+        });
+        if ( a.label === '운영자') {
+          return {
+            ...a,
+            order: parseInt(maxRoleItem.value)+1,
+          }
+        }
+        if ( a.label === '부운영자') {
+          return {
+            ...a,
+            order: parseInt(maxRoleItem.value)+2,
+          }
+        } else {
+          return {
+            ...a,
+            order: a.value
+          }
+        }
+
+      }).sort((a, b) => {
+        if ( a.order < b.order ) {
+          return -1;
+        } else if ( a.order > b.order ) {
+          return 1;
+        }
+        return 0;
+      }).find(a => !!a));
+    }
+
+  }, [roleItems]);
 
   return (
     <motion.div
@@ -177,10 +346,11 @@ const Member = () => {
             </Row>
             <PaginationTable<MemberData>
                 columns={columns}
-                data={item && item.member_list as MemberData[] || []}
+                data={memberList as MemberData[] || []}
                 onPaginationChange={onPaginationChange}
                 pagination={pagination}
                 total={item && item.total_cnt || 0}
+                children={getChangeMemberNode()}
               /> 
           </div>
         </div>
