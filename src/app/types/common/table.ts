@@ -2,7 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 export interface TableProps<T extends object> {
     data: T[],
-    columns: ColumnDef<T>[],
+    columns: ColumnDef<T, string>[],
 }
 
 export type Pagination = {
