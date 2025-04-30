@@ -14,3 +14,14 @@ export type MenuRoleItem = {
     write_disable_yn: string;
     admin_disable_yn: string;
   };
+
+export type RolesByMenu = {
+  menuRoles: {
+    menu_id: number;
+    role_id: number;
+    role_yn: string;
+    read_yn: string;
+    write_yn: string;
+    admin_yn: string;
+  }[]
+}

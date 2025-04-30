@@ -3,12 +3,12 @@
 import { TableProps } from '@/app/types/common/table';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import React, { ReactNode } from 'react';
-import { Table as BootTable } from 'react-bootstrap';
+import { Table as BootstrapTable } from 'react-bootstrap';
 
 const Table = <T extends object>( { data, columns }: TableProps<T> ):ReactNode => {
     const tanstackTable = useReactTable({ data, columns, getCoreRowModel: getCoreRowModel(), });
 
-    return <BootTable  hover bordered >
+    return <BootstrapTable  hover bordered >
         <thead>
             {tanstackTable.getHeaderGroups().map(headerGroup => (
             <tr key={headerGroup.id}>
@@ -33,17 +33,37 @@ const Table = <T extends object>( { data, columns }: TableProps<T> ):ReactNode =
             ))}
         </thead>
         <tbody>
-            {tanstackTable.getRowModel().rows.map(row => (
-            <tr key={row.id}>
-                {row.getVisibleCells().map(cell => (
-                <td key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-                ))}
-            </tr>
-            ))}
+            {tanstackTable.getRowModel().rows.map((row, rowIndex, allRows) => {
+                const getValue = (key: keyof T) => row.getValue(key as any);
+                const prevRow = allRows[rowIndex-1];
+
+                return (
+                    <tr key={row.id}>
+                        {row.getVisibleCells().map(cell => {
+                            const { className, style, isRowSpan } = (cell.column.columnDef.meta as any) || {};
+                            const currentValue = getValue(cell.column.id as keyof T);
+                            const prevValue = prevRow?.getValue(cell.column.id);
+                            const showRowSpan = currentValue !== prevValue;
+                            const rowSpan = allRows.filter(a => a.getValue(cell.column.id) === currentValue ).length;
+                            
+                            if ( isRowSpan ) {
+                                if (showRowSpan) {
+                                    return (<td key={cell.id} rowSpan={rowSpan} className={className} style={style} >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </td>);
+                                } else {
+                                    return null;
+                                }
+                            } else {
+                                return (<td key={cell.id} className={className} style={style}>
+                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        </td>);
+                            }
+                        })}
+                    </tr>);
+            })}
         </tbody>
-    </BootTable>;
+    </BootstrapTable>;
 };
 
 export default Table;
