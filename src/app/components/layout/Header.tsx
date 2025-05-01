@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Manage from '@/components/user/Manage';
 import { Nav, NavDropdown, Navbar, Container } from 'react-bootstrap';
@@ -13,7 +13,7 @@ const Header = () => {
     router.push(url);
   };
 
-  return (
+ return (
       <>
         <Navbar expand="lg" className="bg-primary" data-bs-theme="dark">
             <Container>
