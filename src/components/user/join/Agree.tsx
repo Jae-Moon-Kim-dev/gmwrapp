@@ -1,21 +1,19 @@
 "use client"
 
-import React, { ChangeEvent, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { ChangeEvent, ReactNode, useContext } from 'react';
 import * as S from '@/styles/user/join/UserAgree.styled';
 import { TabContext } from '@/context/TabProvider';
 import { useForm, useWatch, Controller } from 'react-hook-form';
-import CommonModal from '@/components/common/Modal';
 import { initTermAgree } from '@/app/types/user/user';
 import Swal from 'sweetalert2';
 
 const Agree = ({className}:{className:string}):ReactNode => {
   const { setTab, setAgree } = useContext(TabContext);
-  const [ modalShow, setModalShow ] = useState<boolean>(false);
   
   const form = useForm({
     defaultValues: initTermAgree,  
   });
-  const { control, setValue, getValues, formState: { errors }, trigger, clearErrors } = form;
+  const { control, setValue, getValues } = form;
   const memAgrAll = useWatch({
     control,
     name: 'memAgrAll',

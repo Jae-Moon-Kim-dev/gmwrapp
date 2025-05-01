@@ -1,6 +1,8 @@
+/* eslint-disable react/no-children-prop */
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import { motion } from 'framer-motion';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { handleSelectedMenu } from '@/utils/admin/utils';
 import PaginationTable from '@/components/common/PaginationTable';
@@ -13,11 +15,11 @@ import { Pagination } from '@/app/types/common/table';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { ISelectData } from '@/app/types/common/select';
 import { memberSearchParam } from '@/app/types/common/common';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const Member = () => {
-  const { pagination, onPaginationChange, onPageSizeChange } = usePagination();
+  const { pagination, onPaginationChange } = usePagination();
   const queryClient = useQueryClient();
 
   const [ searchQuery, setSearchQuery ] = useState<SearchQuery>({
@@ -34,9 +36,9 @@ const Member = () => {
     }
   });
   
-  const { control, getValues, setValue } = searchForm;
+  const { control, getValues } = searchForm;
   
-  const { data: item, refetch } = useQueryResult<MemberApiData>(['adminMemberListData', pagination, searchQuery], useCallback(async ({ queryKey }) => await fetchMemberListData(queryKey[1] as Pagination, queryKey[2] as SearchQuery), []));
+  const { data: item } = useQueryResult<MemberApiData>(['adminMemberListData', pagination, searchQuery], useCallback(async ({ queryKey }) => await fetchMemberListData(queryKey[1] as Pagination, queryKey[2] as SearchQuery), []));
   const { data: roleItems } = useQueryResult<ISelectData[]>(['roleListData'], useCallback(async () => await fetchRoleListData(), []));
   
   const updateMemberRoleMutation = useMutation({
@@ -86,7 +88,7 @@ const Member = () => {
         accessorKey: 'chkMember',
         id: 'chkMember', 
         header: '선택',
-        cell: ({ getValue, row, column, table }) => {
+        cell: ({ getValue, row }) => {
           const initialValue = (getValue() || false) as boolean;
           const [ chkValue, setChkValue ] = useState<boolean>(initialValue);
 
@@ -168,7 +170,7 @@ const Member = () => {
               value: e.target.value,
             });
           }} >
-            {roleItems && roleItems.filter(a => a.label !== '비회원').map((a, idx) => {
+            {roleItems && roleItems.filter(a => a.label !== '비회원').map((a) => {
               const maxRoleItem = roleItems.reduce((a, b) => {
                 return a.value > b.value ? a: b;
               });
@@ -225,7 +227,7 @@ const Member = () => {
 
   useEffect(() => {
     if ( roleItems && !!roleItems.length ) {
-      setSelectedRole(roleItems.filter(a => a.label !== '비회원').map((a, idx) => {
+      setSelectedRole(roleItems.filter(a => a.label !== '비회원').map((a) => {
         const maxRoleItem = roleItems.reduce((a, b) => {
           return a.value > b.value ? a: b;
         });
@@ -304,8 +306,7 @@ const Member = () => {
                   name='searchParam'
                   control={control}
                   render={({
-                      field, 
-                      field: {onChange},
+                      field,
                   }) => (
                     <Form.Select {...field}>
                     {

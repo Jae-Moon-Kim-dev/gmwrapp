@@ -1,21 +1,21 @@
 "use client";
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { handleSelectedMenu } from '@/utils/admin/utils';
-import { Button, Col, FloatingLabel, Form, Row, Table } from 'react-bootstrap';
+import { Button, FloatingLabel, Form, Table } from 'react-bootstrap';
 import { RoleData, RoleDatas } from '@/app/types/admin/role';
 import { deleteRoleData, fetchRoleListData, insertRoleData, updateRoleData } from '@/app/api/admin/role';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Controller, FieldError, FieldErrors, FieldErrorsImpl, Merge, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, FieldError, useFieldArray, useForm } from 'react-hook-form';
 import Swal from 'sweetalert2';
 
 const Role = () => {
   
-  const { data: items } = useQueryResult<RoleData[]>(['adminRoleListData'], fetchRoleListData); 
+  const { data: items } = useQueryResult<RoleData[]>(['adminRoleListData'], useCallback(async () => fetchRoleListData(), [])); 
   const [ showAddForm, setShowAddForm ] = useState<boolean>(false);
-  const [ roleList, setRoleList ] = useState<RoleData[]>([]);
+  const [ , setRoleList ] = useState<RoleData[]>([]);
   const queryClient = useQueryClient();
 
   const roleForm = useForm<RoleDatas>({
@@ -24,7 +24,7 @@ const Role = () => {
     }
     });
 
-  const { control, setValue, getValues, reset, clearErrors, trigger , formState: { errors } } = roleForm;    
+  const { control, getValues, reset, clearErrors, trigger , formState: { errors } } = roleForm;    
 
   const { fields, prepend, remove } = useFieldArray({
     control,
@@ -208,7 +208,6 @@ const Role = () => {
   }
 
   useEffect(()=>{
-    console.log('useEffect', items);
     if (items && !!items.length) {
       reset({roles: items});
       setRoleList(items);
@@ -217,7 +216,7 @@ const Role = () => {
 
   useEffect(() => {
     const { roles } = errors;
-    console.log(roles);
+    
     if (roles && !!roles.length) {
         const firstErrorMessage = (roles as Record<string, FieldError>[]).flatMap(role =>
           Object.values(role)

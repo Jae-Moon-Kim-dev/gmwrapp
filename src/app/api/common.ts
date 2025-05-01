@@ -44,7 +44,6 @@ apiClient.interceptors.response.use(response=> {
                     };
                     break;
                 case "T-003":// refresh token 만료
-                    console.log("T-003", userStore.getState());
                     userStore.getState().initUser();
                     window.location.href = "/";
                 case "T-004":// 토큰 없음

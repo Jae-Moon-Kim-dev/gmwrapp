@@ -1,20 +1,22 @@
 "use client";
 import { motion } from 'framer-motion';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { handleSelectedMenu } from '@/utils/admin/utils';
 import { MenuRoleItem, RolesByMenu } from '@/app/types/admin/permission';
 import { useQueryResult } from '@/hooks/useQueryResult';
-import { fetchMenuRoleList } from '@/app/api/admin/permission';
+import { fetchMenuRoleList, updateMenuRoleData } from '@/app/api/admin/permission';
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import Table from '@/components/admin/permission/Table';
 import { Button, Form } from 'react-bootstrap';
 import { Controller, useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const MenuPermission = () => {
-  const { data: items } = useQueryResult<MenuRoleItem[]>(['adminMenuRoleListData'], fetchMenuRoleList);
+  const { data: items } = useQueryResult<MenuRoleItem[]>(['adminMenuRoleListData'], useCallback(async () => await fetchMenuRoleList(), []));
   const [ menuRoles, setMenuRoles ] = useState<MenuRoleItem[]>([]);
   const columnHelper = createColumnHelper<MenuRoleItem>();
+  const queryClient = useQueryClient();
 
   const menuRoleForm = useForm<RolesByMenu>({
     defaultValues: {
@@ -29,7 +31,7 @@ const MenuPermission = () => {
       name: 'menuRoles',
   });
 
-  const { fields } = useFieldArray({
+  useFieldArray({
     control,
     name: "menuRoles",
   });
@@ -147,6 +149,9 @@ const MenuPermission = () => {
                                 if ( writeYn === 'Y' || adminYn === 'Y' || e.currentTarget.checked ) {
                                   setValue(`menuRoles.${rowIndex}.role_yn`, 'N');
                                 }
+                                if ( writeYn === 'N' && adminYn === 'N' && !e.currentTarget.checked ) {
+                                  setValue(`menuRoles.${rowIndex}.role_yn`, 'Y');
+                                }
                               }}
                             />
                             <Form.Check.Label key={`menuRoles.${rowIndex}.read_yn_label`} htmlFor={`menuRoles.${rowIndex}.read_yn`} >읽기</Form.Check.Label>
@@ -191,6 +196,9 @@ const MenuPermission = () => {
 
                                 if ( readYn === 'Y' || adminYn === 'Y' || e.currentTarget.checked ) {
                                   setValue(`menuRoles.${rowIndex}.role_yn`, 'N');
+                                }
+                                if ( readYn === 'N' && adminYn === 'N' && !e.currentTarget.checked ) {
+                                  setValue(`menuRoles.${rowIndex}.role_yn`, 'Y');
                                 }
                               }}
                             />
@@ -237,6 +245,9 @@ const MenuPermission = () => {
                                 if ( readYn === 'Y' || writeYn === 'Y' || e.currentTarget.checked ) {
                                   setValue(`menuRoles.${rowIndex}.role_yn`, 'N');
                                 }
+                                if ( writeYn === 'N' && writeYn === 'N' && !e.currentTarget.checked ) {
+                                  setValue(`menuRoles.${rowIndex}.role_yn`, 'Y');
+                                }
                               }}
                             />
                             <Form.Check.Label key={`menuRoles.${rowIndex}.admin_yn_label`} htmlFor={`menuRoles.${rowIndex}.admin_yn`} >관리</Form.Check.Label>
@@ -250,9 +261,18 @@ const MenuPermission = () => {
     })
   ];
 
+  const updateMenuRoleMutation = useMutation({
+    mutationFn: useCallback(async (input: RolesByMenu) => updateMenuRoleData(input), []),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminMenuRoleListData'] });
+    }
+  });
+
   const handleSave = () => {
     const { menuRoles } = getValues();
-    console.log('handleSave', menuRoles);
+    updateMenuRoleMutation.mutate({
+      menuRoles
+    });
   };
 
   useEffect(()=> {
@@ -272,7 +292,7 @@ const MenuPermission = () => {
         setValue(`menuRoles.${idx}.admin_yn`, admin_yn || 'N');
       });
     }
-  }, [items]);
+  }, [items, setValue]);
 
   return (
     <motion.div

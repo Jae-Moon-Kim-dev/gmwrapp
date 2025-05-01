@@ -23,8 +23,8 @@ export const login = async (loginData: Login) => {
 
             return success;
         }
-    } catch (e) {
-        console.log('error', e);
+    } catch {
+        throw new Error('로그인인 실패하였습니다.');
     }
 };
 

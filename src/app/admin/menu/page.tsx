@@ -1,8 +1,7 @@
 "use client";
 import { motion } from 'framer-motion';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
+import React, { useCallback, useEffect, useState } from 'react';
 import { MenuItem, MenuItemApiData, MenuOrderGubun, MenuSaveType } from '@/app/types/admin/menu';
 import dynamic from "next/dynamic";
 import Loading from '@/app/loading';
@@ -39,8 +38,8 @@ const Menu = () => {
   
   const { getValues, reset, clearErrors, trigger, formState: { errors } } = menuForm;
   
-  const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], fetchMenuListData); 
-  const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], ({ queryKey }) => fetchMenuData(queryKey[1] as string));
+  const { data: items, query: { isLoading } } = useQueryResult<MenuItem[]>(['adminMenuListData'], useCallback(async () => fetchMenuListData(), [])); 
+  const { data: item, query: { isLoading: isItemLoading } } = useQueryResult<MenuItemApiData>(['adminMenuOneData', itemId], useCallback(async ({ queryKey }) => await fetchMenuData(queryKey[1] as string), []));
   const [menuItems, setMenuItems] = useState<MenuItem[] | undefined>([]);
 
   const insertMenuMutation = useMutation({
@@ -157,7 +156,6 @@ const Menu = () => {
       let selectedItem = menuItems?.find( a => a.id === itemId );
       let parentId = selectedItem?.parentId;
       
-      // console.log('menuItems, itemId, selectedItemIdx, selectedItem', menuItems, itemId, selectedItemIdx, selectedItem);
       if ( !selectedItem ) {
         menuItems?.forEach(a=> {
           a.children?.forEach(b=> {

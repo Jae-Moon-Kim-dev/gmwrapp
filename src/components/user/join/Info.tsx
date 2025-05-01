@@ -87,15 +87,15 @@ const Info = ({ className }: { className: string }): ReactNode => {
 						if (await insertMember()) {
 							setTab('complete');
 						}
-					} catch ( e ) {
-						throw e;
+					} catch {
+						throw new Error('저장 실패하였습니다.');
 					}
 				}
 			});
 		}
 	}
 
-	const handleIdCheck = useCallback(async (e:React.FocusEvent) => {
+	const handleIdCheck = useCallback(async () => {
 		const { memId } = getValues();
 		if ( !memId ) return;
 
@@ -555,9 +555,9 @@ const Info = ({ className }: { className: string }): ReactNode => {
 								}
 							}}
 							render={({ field, field: { onChange, onBlur } }) => (
-								<S.InputJo {...field} type="text" onChange={onChange} onBlur={(e:React.FocusEvent)=> {
+								<S.InputJo {...field} type="text" onChange={onChange} onBlur={()=> {
 									onBlur();
-									handleIdCheck(e);
+									handleIdCheck();
 								}} id="memId" alt="아이디" />
 							)}
 						/>{/**onBlur={() => {}} idCheck(); */}

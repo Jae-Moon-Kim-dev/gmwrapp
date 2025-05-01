@@ -1,6 +1,6 @@
 "use client"
 
-import { PagenationTableProps, TableProps } from '@/app/types/common/table';
+import { PagenationTableProps } from '@/app/types/common/table';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import React, { ReactNode } from 'react';
 import { Pagination, Table } from 'react-bootstrap';

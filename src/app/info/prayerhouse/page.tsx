@@ -12,7 +12,7 @@ const Prayerhouse = () => {
   const fetchBoards = async ():Promise<Board[]> => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/api/board/all`);
     const { data } = await response.json();
-    console.log(data);
+    
     let no = 0;
     return data.map((a:BoardApiData)=>{
       no += 1;

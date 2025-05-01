@@ -1,3 +1,4 @@
+/* eslint-disable react/no-children-prop */
 "use client";
 
 import React, { ReactNode, useEffect } from 'react';
@@ -42,7 +43,7 @@ const AdminHeader = () => {
     });
 
     if ( selectedMenu ) {
-        let childrenMenus:AdminMenu[] = selectedMenu?.children.map(a => {
+        const childrenMenus:AdminMenu[] = selectedMenu?.children.map(a => {
             if ( a.url === sel ) {
                 return {
                     ...a,

@@ -15,7 +15,7 @@ export const handleSelectedMenu = (url: string | undefined) => {
       });
   
       if ( selectedMenu ) {
-          let childrenMenus:AdminMenu[] = selectedMenu?.children.map(a => {
+          const childrenMenus:AdminMenu[] = selectedMenu?.children.map(a => {
               if ( a.url === url ) {
                   return {
                       ...a,

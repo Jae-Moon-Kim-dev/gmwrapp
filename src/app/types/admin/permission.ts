@@ -1,5 +1,3 @@
-import { TreeViewBaseItem } from "@mui/x-tree-view";
-
 export type MenuRoleItem = {
     parent_menu_id: number;
     parent_menu_name: string;

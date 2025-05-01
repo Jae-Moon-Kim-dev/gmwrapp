@@ -1,10 +1,9 @@
 "use client";
 
-import Link from 'next/link';
 import React, { ReactNode, useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import CommonModal from '../common/Modal';
-import { Container, Row, Col, Dropdown, DropdownButton, Button, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { Container, Row, Col, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import * as S from '@/styles/user/login/UserLogin.styled';
 import { initLoginData } from '@/app/types/user/user';
 import { getUser, login, logout } from '@/app/api/user/manage';
