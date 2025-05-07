@@ -103,3 +103,33 @@ export const initUserData: User = {
 }
 
 export type UserStore = UserStoreState & UserStoreActions;
+
+export type Menu = {
+    id: number,
+    label: string,
+    pathId: string;
+    paths: string;
+    menuOrder: number,
+    parentId: number,
+    url: string,
+}
+
+export type MenuStoreState = {
+    menu: Menu,
+}
+
+export type MenuStoreActions = {
+    setMenu: (menu: MenuStoreState['menu']) => void,
+}
+
+export const initMenuData: Menu = {
+    id: 0,
+    parentId: 0,
+    menuOrder: 0,
+    pathId: '',
+    paths: '',
+    label: '',
+    url: '',
+}
+
+export type MenuStore = MenuStoreState & MenuStoreActions;

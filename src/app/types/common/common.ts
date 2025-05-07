@@ -87,3 +87,15 @@ export type AdminMenuStoreState = {
 }
 
 export type AdminMenuStore = AdminMenuStoreState & AdminMenuStoreActions;
+
+export type MenuItem = {
+    id: string;
+    parentId: string;
+    label: string;
+    url: string;
+    pathId: string;
+    paths: string;
+    menuOrder: number;
+    disabled?: boolean;
+    children?: MenuItem[];
+  };

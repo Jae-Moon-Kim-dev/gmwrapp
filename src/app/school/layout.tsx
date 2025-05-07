@@ -10,16 +10,16 @@ const Layout = (props: { children: React.ReactNode }) => {
     <>
       <Header />
         <main>
-        <Container>
-          <Row>
-            <Col xs={3} >
-              <Sidebar />
-            </Col>
-            <Col xs={9} >
-              {props.children}
-            </Col>
-          </Row>
-        </Container>
+          <Container>
+              <Row>
+                <Col xs={3} >
+                  <Sidebar />
+                </Col>
+                <Col xs={9} >
+                  {props.children}
+                </Col>
+              </Row>
+            </Container>
         </main>
         <Footer />
     </>

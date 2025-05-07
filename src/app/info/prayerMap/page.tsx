@@ -3,7 +3,7 @@
 import { menuStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Breadcrumb, Button, Container } from 'react-bootstrap';
 
 const Information = () => {
