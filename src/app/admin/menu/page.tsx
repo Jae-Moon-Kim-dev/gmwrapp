@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { RichTreeView } from '@mui/x-tree-view/RichTreeView';
 import React, { useCallback, useEffect, useState } from 'react';
-import { MenuItem, MenuItemApiData, MenuOrderGubun, MenuSaveType } from '@/app/types/admin/menu';
+import { MenuDeleteData, MenuItem, MenuItemApiData, MenuOrderGubun, MenuSaveType, MenuUpdateData } from '@/app/types/admin/menu';
 import dynamic from "next/dynamic";
 import Loading from '@/app/loading';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -43,14 +43,14 @@ const Menu = () => {
   const [menuItems, setMenuItems] = useState<MenuItem[] | undefined>([]);
 
   const insertMenuMutation = useMutation({
-    mutationFn: insertMenuData,
+    mutationFn: useCallback((data: MenuUpdateData) => insertMenuData(data), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
     }
   });
 
   const updateMenuMutation = useMutation({
-    mutationFn: updateMenuData,
+    mutationFn: useCallback((data: MenuUpdateData) => updateMenuData(data), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
       queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });
@@ -58,7 +58,7 @@ const Menu = () => {
   });
 
   const saveOrderMenuMutation = useMutation({
-    mutationFn: updateMenuOrder,
+    mutationFn: useCallback(({ datas }: { datas: MenuItem[] | undefined }) => updateMenuOrder({ datas }), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
       queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });
@@ -66,7 +66,7 @@ const Menu = () => {
   });
 
   const deleteMenuMutation = useMutation({
-    mutationFn: deleteMenuData,
+    mutationFn: useCallback((data: MenuDeleteData) => deleteMenuData(data), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMenuListData'] });
       queryClient.invalidateQueries({ queryKey: ['adminMenuOneData'] });

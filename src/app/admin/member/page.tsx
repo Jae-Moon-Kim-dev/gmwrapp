@@ -42,14 +42,14 @@ const Member = () => {
   const { data: roleItems } = useQueryResult<ISelectData[]>(['roleListData'], useCallback(async () => await fetchRoleListData(), []));
   
   const updateMemberRoleMutation = useMutation({
-    mutationFn: updateMemberRole,
+    mutationFn: useCallback(({roleMembers}: {roleMembers: MemberData[]}) => updateMemberRole({roleMembers}), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMemberListData'] });
     }
   });
 
   const deleteMemberMutation = useMutation({
-    mutationFn: deleteMember,
+    mutationFn: useCallback(({deleteMembers}: {deleteMembers: MemberData[]}) => deleteMember({deleteMembers}), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminMemberListData'] });
     }

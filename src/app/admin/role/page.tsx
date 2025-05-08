@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { handleSelectedMenu } from '@/utils/admin/utils';
 import { Button, FloatingLabel, Form, Table } from 'react-bootstrap';
-import { RoleData, RoleDatas } from '@/app/types/admin/role';
+import { RoleData, RoleDatas, RoleEditData } from '@/app/types/admin/role';
 import { deleteRoleData, fetchRoleListData, insertRoleData, updateRoleData } from '@/app/api/admin/role';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -32,21 +32,21 @@ const Role = () => {
   });
 
   const insertRoleMutation = useMutation({
-    mutationFn: insertRoleData,
+    mutationFn: useCallback((data: RoleEditData) => insertRoleData(data), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminRoleListData'] });
     }
   });
 
   const updateRoleMutation = useMutation({
-    mutationFn: updateRoleData,
+    mutationFn: useCallback((data: RoleEditData) => updateRoleData(data), []),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminRoleListData'] });
     }
   });
 
   const deleteRoleMutation = useMutation({
-      mutationFn: deleteRoleData,
+      mutationFn: useCallback((roleId: number) => deleteRoleData(roleId), []),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['adminRoleListData'] });
       }
