@@ -13,10 +13,25 @@ export const fetchMenuList = async ():Promise<MenuItem[]> => {
   
 export const fetchMenu = async (id: number):Promise<MenuItem> => {
   const res = await apiClient.get(`/api/menu/${id}`);
-const {success, data} = res.data as ApiReturn;
-if ( !success ) {
-  throw new Error("Failed to fetch data");
-}
+  const {success, data} = res.data as ApiReturn;
+  if ( !success ) {
+    throw new Error("Failed to fetch data");
+  }
 
   return data as Promise<MenuItem>;
+}
+
+export const uploadFile = async (formData: FormData) => {
+  const res = await apiClient.post('/api/file/upload', formData, {
+    headers: {
+      "Content-Type": 'multipart/form-data',
+    }
+  });
+
+  const {success, data} = res.data as ApiReturn;
+  if ( !success ) {
+    throw new Error("Failed to fetch data");
+  }
+
+  return data;
 }
