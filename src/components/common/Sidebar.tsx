@@ -1,8 +1,8 @@
 "use client";
 
 import { MenuItem } from '@/app/types/common/common';
-import React, { ReactNode, useCallback, useEffect } from 'react';
-import { Container, ListGroup, Nav } from 'react-bootstrap';
+import React, { ReactNode, useCallback } from 'react';
+import { Container, Nav } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { menuStore } from '@/stores/userStore';
 import { useQueryResult } from '@/hooks/useQueryResult';
@@ -40,6 +40,7 @@ const Sidebar = () => {
                     listItem.push(<Nav.Link key={`side_sub_menu_${a.id}`} className='fs-6' href="#" onClick={()=> {handleSelectedMenu(a);}} active={(parseInt(a.id) === topMenu.id)} >{a.label}</Nav.Link>);
                 });
             }
+            // eslint-disable-next-line react/no-children-prop
             itemNode = <Nav key={`side_menu_${item.id}`} children={listItem} className="nav-pills flex-column" ></Nav>;
         }
 

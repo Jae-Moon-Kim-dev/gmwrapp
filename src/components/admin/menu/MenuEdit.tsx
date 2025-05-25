@@ -140,6 +140,7 @@ const MenuEdit = ({item}: {item:MenuItemApiData | undefined}):ReactNode => {
                     }) => (
                     <CommonSelect {...field} width='100px' data={visibleData && (visibleData as (ISelectData[] | undefined))} handleChange={(e: ISelectData) => {
                         onChange(e);
+                        console.log(e.label, '|', e.value);
                         setValue("visible_yn", e.value);
                     }} /> 
                     // setSelectValue={setInfoMonth2}

@@ -4,7 +4,7 @@ import { menuStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
-import { Breadcrumb, Button, Container } from 'react-bootstrap';
+import { Breadcrumb, Container } from 'react-bootstrap';
 
 const Information = () => {
   const menu = menuStore(state => state.menu);

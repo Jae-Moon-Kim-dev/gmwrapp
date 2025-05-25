@@ -1,6 +1,6 @@
 "use client";
 
-import React, { ReactNode, useCallback, useEffect } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import Image from 'next/image';
 import Manage from '@/components/user/Manage';
 import { Nav, NavDropdown, Navbar, Container } from 'react-bootstrap';
@@ -43,6 +43,7 @@ const Header = () => {
                     }} >{childLabel}</NavDropdown.Item>);
                 });
             }
+            // eslint-disable-next-line react/no-children-prop
             const menu = <NavDropdown children={childrenNode} key={`menu_${id}`} className='bg-primary' data-bs-theme="light" title={label} id={`navbarScrollingDropdown${id}`}></NavDropdown>;
             menus.push(menu);
         });

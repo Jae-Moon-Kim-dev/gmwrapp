@@ -1,21 +1,18 @@
 "use client";
 
-import apiClient from '@/app/api/common';
-import { uploadFile } from '@/app/api/common/common';
 import { menuStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Breadcrumb, Container } from 'react-bootstrap';
 
 const Information = () => {
   const menu = menuStore(state => state.menu);
   const router = useRouter();
   const { paths, pathId, url, label } = menu;
-  const TuiEditor = dynamic(() => import('@/components/common/TuiEditor'), {
-    ssr: false,
-  });
+  // const TuiEditor = dynamic(() => import('@/components/common/TuiEditor'), {
+  //   ssr: false,
+  // });
 
   const nextPage = (url: string) => {
     router.push(url);
@@ -29,14 +26,14 @@ const Information = () => {
     return pathNames.map((a, idx) => (<Breadcrumb.Item key={`path_child_${pathIds[idx]}`} onClick={() => {nextPage(url);}} >{a}</Breadcrumb.Item>));
   }
 
-  const handleImage = useCallback(async (blob: File, callback: typeof Function) => {
-    const formData = new FormData();
+  // const handleImage = useCallback(async (blob: File, callback: typeof Function) => {
+  //   const formData = new FormData();
 
-    formData.append('file', blob);
-    formData.append('type', `${menu.id}`);
-    const data = await uploadFile(formData);
+  //   formData.append('file', blob);
+  //   formData.append('type', `${menu.id}`);
+  //   const data = await uploadFile(formData);
     
-  }, []);
+  // }, []);
 
   useEffect(()=>{
     
@@ -55,7 +52,7 @@ const Information = () => {
           { menu && pathNode() }
         </Breadcrumb>
         <hr/>
-        <TuiEditor handleImage={(blob: File, callback: typeof Function) => handleImage(blob, callback)} />
+        {/* <TuiEditor handleImage={(blob: File, callback: typeof Function) => handleImage(blob, callback)} /> */}
       </Container>
     </motion.div>
   );

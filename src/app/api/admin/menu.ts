@@ -55,6 +55,7 @@ export const updateMenuData = async ( data: MenuUpdateData ):Promise<boolean> =>
   const { menu_id, parent_menu_id, menu_type, menu_name, menu_url, visible_yn } = data;
   await apiClient.patch(`/api/admin/menus/saveMenu/${menu_id}`,{
       parent_menu_id: menu_type === 'menu' ? null : parent_menu_id,
+      menu_type,
       menu_name,
       menu_url,
       visible_yn,
@@ -67,6 +68,7 @@ export const insertMenuData = async ( data: MenuUpdateData ):Promise<boolean> =>
   const { parent_menu_id, menu_type, menu_name, menu_url,visible_yn } = data;
   await apiClient.post(`/api/admin/menus/saveMenu`,{
       parent_menu_id: menu_type === 'menu' ? null : parent_menu_id,
+      menu_type,
       menu_name,
       menu_url,
       visible_yn,

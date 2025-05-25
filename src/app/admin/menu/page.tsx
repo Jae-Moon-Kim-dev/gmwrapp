@@ -82,6 +82,8 @@ const Menu = () => {
   const saveMenu = async () => {
       const { menu_type, menu_id, parent_menu_id, menu_name, menu_url, visible_yn } = getValues();
 
+      console.log(visible_yn);
+
       clearErrors();
       const isVallid = await trigger();
       if (isVallid) {
