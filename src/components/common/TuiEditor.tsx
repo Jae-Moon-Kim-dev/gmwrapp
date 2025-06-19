@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import '@toast-ui/editor/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/chart/dist/toastui-chart.min.css';
@@ -14,12 +14,25 @@ import tableMergedCell from '@toast-ui/editor-plugin-table-merged-cell';
 import uml from '@toast-ui/editor-plugin-uml';
 import { EditorProps } from '@/app/types/common/editor';
 
-const TuiEditor = ({ handleImage }: EditorProps) => {
+const TuiEditor = ({ 
+    handleImage,
+    value,
+    editorRef,
+}: EditorProps) => {
+
+    useEffect(()=>{
+        console.log(value);
+        if ( editorRef && editorRef.current && value ) {
+            editorRef.current.getInstance().setHTML(value);
+        }
+    },[value, editorRef]);
+
     return <>
         <Editor
-            initialValue="입력하세요"
+            ref={editorRef}
             initialEditType="wysiwyg"
             usageStatistics={false}
+            height="570px"
             plugins={[chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml]}
             hooks={{ addImageBlobHook: handleImage }}
         />

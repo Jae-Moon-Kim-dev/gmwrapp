@@ -15,8 +15,12 @@ const Header = () => {
   const { data: items } = useQueryResult<MenuItem[]>(['menuListData'], useCallback(async () => fetchMenuList(), []));
   const setMenu = menuStore((state) => state.setMenu);
 
-  const nextPage = (url: string) => {
-    router.push(url);
+  const nextPage = (url: string, parentId?: string, id?: string) => {
+    let pathName = '';
+    if ( parentId ) pathName = `${pathName}?parentId=${parentId}`;
+    if ( id ) pathName = pathName ? `${pathName}&menuId=${id}` : `${pathName}?menuId=${id}`;
+
+    router.push(`${url}${pathName}`);
   };
 
   const getMenus = () => {
@@ -30,7 +34,7 @@ const Header = () => {
                 children.forEach(b => {
                     const { url, label: childLabel, id: childId, menuOrder, pathId, paths } = b;
                     childrenNode.push(<NavDropdown.Item key={`menu_${childId}`} href="#" onClick={() => {
-                        nextPage(url);
+                        nextPage(url, id, childId);
                         setMenu({
                             parentId: parseInt(id),
                             id: parseInt(childId),

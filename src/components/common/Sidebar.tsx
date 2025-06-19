@@ -1,18 +1,20 @@
 "use client";
 
 import { MenuItem } from '@/app/types/common/common';
-import React, { ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback, useEffect } from 'react';
 import { Container, Nav } from 'react-bootstrap';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { menuStore } from '@/stores/userStore';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import { fetchMenu } from '@/app/api/common/common';
 
 const Sidebar = () => {
-    const topMenu = menuStore((state) => state.menu);
+    const searchParams = useSearchParams();
+    const parentId = searchParams?.get("parentId");
+    const menuId = searchParams?.get("menuId");
     const setMenu = menuStore((state) => state.setMenu);
     const router = useRouter();
-    const { data: item } = useQueryResult<MenuItem>(['menuOneData', topMenu?.parentId], useCallback(async ({ queryKey }) => await fetchMenu(queryKey[1] as number), []));
+    const { data: item } = useQueryResult<MenuItem>(['menuOneData', parentId], useCallback(async ({ queryKey }) => await fetchMenu(queryKey[1] as number), []));
 
     const handleSelectedMenu = (menu: MenuItem | undefined) => {
         if ( menu ) {
@@ -25,7 +27,11 @@ const Sidebar = () => {
                 pathId: menu.pathId,
                 paths: menu.paths,
             });
-            router.push(menu.url);
+            let pathName = '';
+            if ( menu.parentId ) pathName = `${pathName}?parentId=${menu.parentId}`;
+            if ( menu.id ) pathName = pathName ? `${pathName}&menuId=${menu.id}` : `${pathName}?menuId=${menu.id}`;
+
+            router.push(`${menu.url}${pathName}`);
         } 
     };
 
@@ -34,10 +40,10 @@ const Sidebar = () => {
         
         if ( item ) {
             const listItem:ReactNode[] = [];
-            listItem.push(<Nav.Item key={`side_sub_menu_${item.id}`} className='fs-5 fw-bold' onClick={()=> {handleSelectedMenu(item);}} >{item.label}</Nav.Item>);
+            listItem.push(<Nav.Item key={`side_sub_menu_${item.id}`} className='fs-5 fw-bold' >{item.label}</Nav.Item>);
             if ( item.children ) {
                 item.children.forEach(a => {
-                    listItem.push(<Nav.Link key={`side_sub_menu_${a.id}`} className='fs-6' href="#" onClick={()=> {handleSelectedMenu(a);}} active={(parseInt(a.id) === topMenu.id)} >{a.label}</Nav.Link>);
+                    listItem.push(<Nav.Link key={`side_sub_menu_${a.id}`} className='fs-6' href="#" onClick={()=> {handleSelectedMenu(a);}} active={(parseInt(a.id) === parseInt(menuId ?? ''))} >{a.label}</Nav.Link>);
                 });
             }
             // eslint-disable-next-line react/no-children-prop
@@ -46,6 +52,15 @@ const Sidebar = () => {
 
         return itemNode;
     };
+
+    useEffect(() => {
+        if ( item && item.children ) {
+            item.children.forEach(a => {
+                if ( parseInt(a.id) === parseInt(menuId ?? '') )
+                handleSelectedMenu(a);
+            });
+        }
+    }, [item]);
 
     return <Container className='my-4 px-5' >
     {

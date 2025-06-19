@@ -1,3 +1,4 @@
+import { Page } from "@/app/types/common/board";
 import apiClient from "../common";
 import { ApiReturn, MenuItem } from "@/app/types/common/common";
 
@@ -34,4 +35,23 @@ export const uploadFile = async (formData: FormData) => {
   }
 
   return data;
+}
+
+export const savePage = async (menuId: string, content: string) => {
+  await apiClient.post(`/api/board/savePage`,{
+      menuId,
+      content,
+  });
+
+  return true;
+}
+
+export const fetchPage = async (menuId: string):Promise<Page> => {
+  const res = await apiClient.get(`/api/board/getPage/${menuId}`);
+  const {success, data} = res.data as ApiReturn;
+  if ( !success ) {
+    throw new Error("Failed to fetch data");
+  }
+
+  return data as Promise<Page>;
 }
