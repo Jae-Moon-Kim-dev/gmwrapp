@@ -75,6 +75,7 @@ export type User = {
     id: number,
     name: string,
     mem_id: string,
+    role_id: number,
 }
 
 export type Login = {
@@ -100,6 +101,7 @@ export const initUserData: User = {
     id: 0,
     name: '',
     mem_id: '',
+    role_id: 0,
 }
 
 export type UserStore = UserStoreState & UserStoreActions;

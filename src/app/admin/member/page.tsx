@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { handleSelectedMenu } from '@/utils/admin/utils';
-import PaginationTable from '@/components/common/PaginationTable';
+import PaginationTable from '@/components/admin/common/PaginationTable';
 import { ColumnDef } from '@tanstack/react-table';
 import { MemberApiData, MemberData, SearchQuery } from '@/app/types/admin/member';
 import { deleteMember, fetchMemberListData, fetchRoleListData, updateMemberRole } from '@/app/api/admin/member';

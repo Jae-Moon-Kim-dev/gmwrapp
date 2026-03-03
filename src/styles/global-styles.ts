@@ -85,7 +85,7 @@ export const GlobalStyle = createGlobalStyle`
     }
 
     body, input, select {
-        font-size: 12px;
+        font-size: 16px;
         color: #545454;
     }
 

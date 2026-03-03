@@ -51,6 +51,7 @@ apiClient.interceptors.response.use(response=> {
                         icon: "error",
                         text: errorMessage,
                     });
+                    window.location.href = "/";
                     break;
                 case "T-005"://  토큰에 담긴 유저와 토큰 보낸 유저 다름
                     Swal.fire({

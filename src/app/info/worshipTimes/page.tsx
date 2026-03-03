@@ -1,15 +1,19 @@
 "use client";
 
-import { menuStore } from '@/stores/userStore';
+import ComPage from '@/components/common/ComPage';
+import { menuStore, userStore } from '@/stores/userStore';
 import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { Breadcrumb, Container } from 'react-bootstrap';
 
 const Information = () => {
   const menu = menuStore(state => state.menu);
+  const user = userStore(state => state.user);
   const router = useRouter();
   const { paths, pathId, url, label } = menu;
+  const searchParams = useSearchParams();
+  const menuId = searchParams?.get("menuId");
 
   const nextPage = (url: string) => {
     router.push(url);
@@ -34,12 +38,16 @@ const Information = () => {
       exit={{ opacity: 0, x: -20 }}
       transition={{ duration: 0.5 }}
     >
-      <Container>
+      <Container className='pb-3'>
         <Breadcrumb key={`path_${label}`} className='mt-3' >
           <Breadcrumb.Item key={'path_home'} >Home</Breadcrumb.Item>
           { menu && pathNode() }
         </Breadcrumb>
         <hr/>
+        <ComPage 
+          menuId={menuId}
+          roleId={(user.role_id).toString()}
+        />
       </Container>
     </motion.div>
   );

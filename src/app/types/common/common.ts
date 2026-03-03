@@ -99,3 +99,5 @@ export type MenuItem = {
     disabled?: boolean;
     children?: MenuItem[];
   };
+
+export const fileTypeExts = ['.zip','.nwc','.pdf','.hwp','.ppt','.pptx','.doc','.docx','.xls','.xlsx','.mp3'];
