@@ -22,14 +22,13 @@ const ComDetailBoard = ({
     { ssr: false }
   );
 
-  const board_title = '길...';
-  const board_user_name = '송인철';
-  const board_user_date = '2008-07-15';
-  const like_count = '3';
-  const comment_count = '1';
-  const views_count = '4056'
+  const board_title = boardData?.board_title ?? '';
+  const board_user_name = boardData?.board_user_name ?? '';
+  const board_user_date = boardData?.board_user_date ?? '';
+  const like_count = boardData?.like_count ?? '0';
+  const comment_count = '0';
+  const views_count = boardData?.views_count ?? '0';
   // const { pagination, onPaginationChange } = usePagination();
-  const [ isDetailModify, setDetailModify ] = useState<boolean>(false);
   
   const { data: userRole } = useQueryResult<Role>(
     ['fetchRoleByUser', menuId, roleId], 

@@ -6,10 +6,9 @@ import { Pagination } from '@/app/types/common/table';
 import { usePagination } from '@/hooks/usePagination';
 import { useQueryResult } from '@/hooks/useQueryResult';
 import { ColumnDef } from '@tanstack/react-table';
-import React, { ReactNode, useCallback, useContext } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import PaginationTable from './PaginationTable';
-import { BoardContext } from '@/context/BoardProvider';
 
 const ComBoard = ({
   menuId,
@@ -17,7 +16,6 @@ const ComBoard = ({
   menuId: string | null | undefined
 }) => {
   const { pagination, onPaginationChange } = usePagination();
-  const { setModify } = useContext(BoardContext);
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -37,8 +35,8 @@ const ComBoard = ({
     if ( searchParams ) {
       const params = new URLSearchParams(searchParams.toString());
       params.set('boardId', boardId);
+      params.delete('mode');
       router.push(`${pathName}?${params.toString()}`);
-      setModify(true);
     }
   }, [searchParams]);
 

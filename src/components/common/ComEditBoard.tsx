@@ -1,24 +1,22 @@
 "use client";
 
-import { fetchBoardData, fetchUserRole, insertBoard, uploadFile } from '@/app/api/common/common';
-import { BoardData, BoardUpdateData, ComPageProps, Role } from '@/app/types/common/board';
+import { insertBoard, uploadFile } from '@/app/api/common/common';
+import { BoardUpdateData, ComPageProps } from '@/app/types/common/board';
 import { HookCallback } from '@/app/types/common/editor';
-import { useQueryResult } from '@/hooks/useQueryResult';
 import { userStore } from '@/stores/userStore';
 import { Editor } from '@toast-ui/react-editor';
 import dynamic from 'next/dynamic';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import DropzoneFileupload from './DropzoneFileupload';
 import InputField from './board/InputField';
 import Swal from 'sweetalert2';
-import { BoardContext } from '@/context/BoardProvider';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 
 const ComEditBoard = ({
   menuId,
-  roleId,
+  boardData,
 }: ComPageProps) => {
   const TuiEditor = dynamic(() => import('@/components/common/TuiEditor'), {
     ssr: false,
@@ -27,34 +25,58 @@ const ComEditBoard = ({
   const searchParams = useSearchParams();
   const pathName = usePathname();
   const router = useRouter();
-  const boardId = searchParams?.get("boardId");
   const editRef = useRef<Editor>(null);
   const user = userStore((state) => state.user);
-  const { setModify } = useContext(BoardContext);
-  const boardForm = useForm<BoardUpdateData>({
-      defaultValues: {
-        menu_id: "",
-        board_id: "",
-        board_type: "board",
-        board_title: "",
-        board_content: "",
-        board_files: [],
-        noti_yn: "N",
-        admin_yn: "N",
-        board_user_name: "",
-      } 
-    });
 
-  const { control, setValue, trigger, clearErrors, formState: { errors } } = boardForm;
+  
+
+  const boardForm = useForm<BoardUpdateData>({
+    defaultValues: {
+      menu_id: "",
+      board_id: "",
+      board_type: "board",
+      board_title: "",
+      board_content: "",
+      board_files: [],
+      noti_yn: "N",
+      admin_yn: "N",
+      board_user_name: "",
+      board_user_date: "",
+      like_count: "",
+      views_count: "",
+    },
+  });
+
+  const { control, setValue, trigger, clearErrors, reset, formState: { errors } } = boardForm;
+
+  // 상세에서 넘어온 boardData 로 폼 초기값 세팅
+  useEffect(() => {
+    if (boardData) {
+      reset({
+        menu_id: boardData.menu_id ?? menuId,
+        board_id: boardData.board_id,
+        board_type: boardData.board_type,
+        board_title: boardData.board_title,
+        board_content: boardData.board_content,
+        board_files: boardData.board_files ?? [],
+        noti_yn: boardData.noti_yn,
+        admin_yn: boardData.admin_yn,
+        board_user_name: boardData.board_user_name,
+        board_user_date: boardData.board_user_date,
+        like_count: boardData.like_count,
+        views_count: boardData.views_count,
+      });
+    }
+  }, [boardData, menuId, reset]);
   
   const handleImage = useCallback(async (blob: File | Blob, getImage: HookCallback) => {
-      const formData = new FormData();
-  
-      formData.append('file', blob);
-      formData.append('type', `${menuId}`);
-      const data = await uploadFile(formData);
-      getImage(`${process.env.NEXT_PUBLIC_API_DOMAIN}${data}`, formData.get('file')?.toString());
-    }, [menuId]);
+    const formData = new FormData();
+
+    formData.append('file', blob);
+    formData.append('type', `${menuId}`);
+    const data = await uploadFile(formData);
+    getImage(`${process.env.NEXT_PUBLIC_API_DOMAIN}${data}`, formData.get('file')?.toString());
+  }, [menuId]);
   
   const chkBoardContent = (content: string) => {
     let cleanContent = content.replace(/<p>\s*<\/p>|<br\s*\/?>|<p><br><\/p>|&nbsp;/gi, '');
@@ -68,10 +90,10 @@ const ComEditBoard = ({
     if ( searchParams ) {
       const params = new URLSearchParams(searchParams.toString());
       params.delete('boardId');
+      params.delete('mode');
       router.push(`${pathName}?${params.toString()}`);
-      setModify(true);
     }
-  }, [searchParams]);
+  }, [pathName, router, searchParams]);
 
   const handleSaveBoard = useCallback(async () => {
     let content = '' as string | undefined;
@@ -116,24 +138,31 @@ const ComEditBoard = ({
         formData.append('admin_yn', admin_yn);
 
         const result = await insertBoard(formData);
-        
-        if ( result ) setModify(false);
+
+        if ( result ) {
+          const params = new URLSearchParams(searchParams?.toString());
+          params.delete('boardId');
+          params.delete('mode');
+          router.push(`${pathName}?${params.toString()}`);
+        }
       }
     }
 
-  }, [clearErrors, setModify, setValue, trigger, boardForm, editRef]);
+  }, [clearErrors, trigger, setValue, boardForm, menuId, searchParams, router, pathName]);
 
   useEffect(() => {
-      if ( errors && !!Object.values(errors).find(error => !!error) ) {
-  
+    if (errors && Object.values(errors).length > 0) {
+      const firstError = Object.values(errors).find(error => !!error);
+
+      if (firstError?.message) {
         Swal.fire({
-          icon : "error",
-          text: Object.values(errors).find(error => !!error)?.message,
-          showCloseButton: true
+          icon: "error",
+          text: firstError.message as string,
+          showCloseButton: true,
         });
-        
       }
-    }, [errors && !!Object.values(errors).find(error => !!error)]);
+    }
+  }, [errors]);
 
   return (
     <>
@@ -168,7 +197,7 @@ const ComEditBoard = ({
     </Form>
     <Row className='my-3'>
       <Col xs={{ span: 5 }} className='d-flex justify-content-start' > 
-        <Button variant="primary" className='mx-3' onClick={()=> {goList();setModify(false);}} >목록</Button>
+        <Button variant="primary" className='mx-3' onClick={()=> {goList()}} >목록</Button>
       </Col>
       <Col xs={{ span: 5, offset: 2 }} className='d-flex justify-content-end' > 
         <Button variant="primary" className='mx-3' onClick={async ()=> {await handleSaveBoard();}} >등록</Button>

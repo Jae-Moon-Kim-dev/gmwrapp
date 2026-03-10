@@ -1,31 +1,12 @@
 "use client"
 
-import React, { createContext, ReactNode, useState } from "react"
+import React, { createContext, ReactNode } from "react"
 
-export const BoardContext = createContext<{
-    isModify: boolean,
-    setModify: React.Dispatch<React.SetStateAction<boolean>>,
-    boardId: string,
-    setBoardId: React.Dispatch<React.SetStateAction<string>>,
-}>({
-    isModify: false,
-    setModify: () => {},
-    boardId: '',
-    setBoardId: () => {},
-});
+export const BoardContext = createContext<Record<string, never>>({});
 
 const BoardProvider = ({ children }: { children: ReactNode }) => {
-    const [isModify, setModify] = useState<boolean>(false);
-    const [boardId, setBoardId] = useState<string>('');
-
     return (
-        <BoardContext.Provider 
-            value={{ 
-                isModify, 
-                setModify,
-                boardId,
-                setBoardId,
-            }}>
+        <BoardContext.Provider value={{}}>
             {children}
         </BoardContext.Provider>
     );
