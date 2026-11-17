@@ -1,10 +1,12 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
+import Container from "@mui/material/Container"
 import { getMenuByPath, getMenuTree, type MenuType } from "@/lib/menus"
 import PageHeader from "@/components/board/PageHeader"
 import BoardList from "@/components/board/BoardList"
 import PageContent from "@/components/board/PageContent"
+import Loading from "@/components/board/Loading"
 
 // 메뉴 주소 하나가 이 파일 하나로 처리됩니다: /about/intro, /community/free ...
 // 메뉴 목록으로 주소를 미리 만들어 두고, 본문(로그인 권한에 따라 달라짐)만 요청 시 불러옵니다.
@@ -33,8 +35,8 @@ export default async function MenuPage({ params, searchParams }: PageProps<"/[se
   return (
     <>
       <PageHeader group={group.name} title={menu.name} />
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <Suspense fallback={<p className="py-20 text-center text-gray-400">불러오는 중...</p>}>
+      <Container maxWidth="lg" sx={{ py: 5 }}>
+        <Suspense fallback={<Loading />}>
           <MenuBody
             type={menu.menu_type as MenuType}
             menuId={menu.id}
@@ -42,7 +44,7 @@ export default async function MenuPage({ params, searchParams }: PageProps<"/[se
             searchParams={searchParams}
           />
         </Suspense>
-      </div>
+      </Container>
     </>
   )
 }

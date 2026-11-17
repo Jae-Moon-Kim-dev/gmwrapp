@@ -1,8 +1,12 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter"
+import { ThemeProvider } from "@mui/material/styles"
+import CssBaseline from "@mui/material/CssBaseline"
+import Box from "@mui/material/Box"
+import theme from "@/theme"
 import Header from "@/components/layout/Header"
 import Footer from "@/components/layout/Footer"
-import "./globals.css"
 
 const nanum = localFont({
   src: [
@@ -22,11 +26,20 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ko" className={`${nanum.variable} h-full`}>
-      <body className="flex min-h-full flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+    <html lang="ko" className={nanum.variable}>
+      <body>
+        <AppRouterCacheProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+              <Header />
+              <Box component="main" sx={{ flex: 1 }}>
+                {children}
+              </Box>
+              <Footer />
+            </Box>
+          </ThemeProvider>
+        </AppRouterCacheProvider>
       </body>
     </html>
   )

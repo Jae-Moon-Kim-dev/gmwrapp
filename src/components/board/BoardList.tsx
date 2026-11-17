@@ -1,7 +1,15 @@
-import Link from "next/link"
+import Table from "@mui/material/Table"
+import TableBody from "@mui/material/TableBody"
+import TableCell from "@mui/material/TableCell"
+import TableHead from "@mui/material/TableHead"
+import TableRow from "@mui/material/TableRow"
+import Chip from "@mui/material/Chip"
+import Box from "@mui/material/Box"
+import NextLink from "@/components/ui/NextLink"
 import { getAuthorNames, getPosts, PAGE_SIZE } from "@/lib/posts"
 import { formatDate } from "@/lib/format"
-import Pagination from "./Pagination"
+import BoardPagination from "./BoardPagination"
+import EmptyMessage from "./EmptyMessage"
 
 type Props = {
   menuId: number
@@ -9,51 +17,62 @@ type Props = {
   page: number
 }
 
+// 모바일에서는 번호·작성자·조회수 칸을 숨김
+const hideOnMobile = { display: { xs: "none", sm: "table-cell" } }
+
 export default async function BoardList({ menuId, basePath, page }: Props) {
   const { posts, total } = await getPosts(menuId, page)
   const authors = await getAuthorNames(posts.map((p) => p.user_id))
 
   if (posts.length === 0) {
-    return <p className="py-20 text-center text-gray-400">등록된 글이 없습니다.</p>
+    return <EmptyMessage>등록된 글이 없습니다.</EmptyMessage>
   }
 
   return (
     <>
-      <table className="w-full border-t-2 border-brand-700 text-sm">
-        <thead className="border-b border-gray-200 bg-gray-50 text-gray-600">
-          <tr>
-            <th className="hidden w-16 py-3 sm:table-cell">번호</th>
-            <th className="py-3 text-left">제목</th>
-            <th className="hidden w-28 py-3 sm:table-cell">작성자</th>
-            <th className="w-28 py-3">등록일</th>
-            <th className="hidden w-16 py-3 sm:table-cell">조회</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table size="small" sx={{ borderTop: 2, borderColor: "primary.main", "& td, & th": { py: 1.5 } }}>
+        <TableHead sx={{ bgcolor: "grey.50" }}>
+          <TableRow>
+            <TableCell align="center" sx={{ ...hideOnMobile, width: 70 }}>번호</TableCell>
+            <TableCell>제목</TableCell>
+            <TableCell align="center" sx={{ ...hideOnMobile, width: 110 }}>작성자</TableCell>
+            <TableCell align="center" sx={{ width: 110 }}>등록일</TableCell>
+            <TableCell align="center" sx={{ ...hideOnMobile, width: 70 }}>조회</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {posts.map((post, i) => (
-            <tr key={post.id} className="border-b border-gray-100 hover:bg-brand-50/50">
-              <td className="hidden py-3 text-center text-gray-500 sm:table-cell">
+            <TableRow key={post.id} hover>
+              <TableCell align="center" sx={{ ...hideOnMobile, color: "text.secondary" }}>
                 {post.is_notice ? (
-                  <span className="rounded bg-accent px-2 py-0.5 text-xs font-bold text-white">공지</span>
+                  <Chip label="공지" size="small" color="secondary" />
                 ) : (
                   total - (page - 1) * PAGE_SIZE - i
                 )}
-              </td>
-              <td className="py-3">
-                <Link href={`${basePath}/${post.id}`} className="hover:text-brand-600 hover:underline">
+              </TableCell>
+              <TableCell>
+                <Box
+                  component={NextLink}
+                  href={`${basePath}/${post.id}`}
+                  sx={{ "&:hover": { color: "primary.main", textDecoration: "underline" } }}
+                >
                   {post.title}
-                </Link>
-              </td>
-              <td className="hidden py-3 text-center text-gray-600 sm:table-cell">
+                </Box>
+              </TableCell>
+              <TableCell align="center" sx={{ ...hideOnMobile, color: "text.secondary" }}>
                 {post.user_id ? authors.get(post.user_id) : "-"}
-              </td>
-              <td className="py-3 text-center text-gray-500">{formatDate(post.created_at)}</td>
-              <td className="hidden py-3 text-center text-gray-500 sm:table-cell">{post.view_count}</td>
-            </tr>
+              </TableCell>
+              <TableCell align="center" sx={{ color: "text.secondary" }}>
+                {formatDate(post.created_at)}
+              </TableCell>
+              <TableCell align="center" sx={{ ...hideOnMobile, color: "text.secondary" }}>
+                {post.view_count}
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-      <Pagination basePath={basePath} page={page} totalPages={Math.ceil(total / PAGE_SIZE)} />
+        </TableBody>
+      </Table>
+      <BoardPagination basePath={basePath} page={page} totalPages={Math.ceil(total / PAGE_SIZE)} />
     </>
   )
 }

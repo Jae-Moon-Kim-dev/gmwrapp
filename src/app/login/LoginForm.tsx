@@ -2,6 +2,10 @@
 
 import { useActionState } from "react"
 import { useSearchParams } from "next/navigation"
+import Stack from "@mui/material/Stack"
+import TextField from "@mui/material/TextField"
+import Button from "@mui/material/Button"
+import Alert from "@mui/material/Alert"
 import { signIn, type LoginState } from "./actions"
 
 export default function LoginForm() {
@@ -9,39 +13,14 @@ export default function LoginForm() {
   const [state, formAction, pending] = useActionState<LoginState, FormData>(signIn, {})
 
   return (
-    <form action={formAction} className="space-y-4">
+    <Stack component="form" action={formAction} spacing={2.5}>
       <input type="hidden" name="next" value={next} />
-
-      <label className="block">
-        <span className="mb-1 block text-sm font-bold">이메일</span>
-        <input
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          className="w-full rounded border border-gray-300 px-3 py-2 focus:border-brand-500 focus:outline-none"
-        />
-      </label>
-
-      <label className="block">
-        <span className="mb-1 block text-sm font-bold">비밀번호</span>
-        <input
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          className="w-full rounded border border-gray-300 px-3 py-2 focus:border-brand-500 focus:outline-none"
-        />
-      </label>
-
-      {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-
-      <button
-        disabled={pending}
-        className="w-full rounded bg-brand-600 py-2.5 font-bold text-white hover:bg-brand-700 disabled:opacity-60"
-      >
+      <TextField name="email" type="email" label="이메일" autoComplete="email" required fullWidth />
+      <TextField name="password" type="password" label="비밀번호" autoComplete="current-password" required fullWidth />
+      {state.error && <Alert severity="error">{state.error}</Alert>}
+      <Button type="submit" variant="contained" size="large" disabled={pending}>
         {pending ? "로그인 중..." : "로그인"}
-      </button>
-    </form>
+      </Button>
+    </Stack>
   )
 }

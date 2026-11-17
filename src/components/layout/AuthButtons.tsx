@@ -1,4 +1,6 @@
-import Link from "next/link"
+import Box from "@mui/material/Box"
+import Button from "@mui/material/Button"
+import NextLink from "@/components/ui/NextLink"
 import { getCurrentUser } from "@/lib/auth"
 import { signOut } from "@/app/login/actions"
 
@@ -7,22 +9,24 @@ export default async function AuthButtons() {
 
   if (!user) {
     return (
-      <Link href="/login" className="rounded px-3 py-1.5 text-sm hover:bg-white/10">
+      <Button component={NextLink} href="/login" color="inherit" size="small">
         로그인
-      </Link>
+      </Button>
     )
   }
 
   return (
-    <div className="flex items-center gap-1 text-sm">
+    <Box sx={{ display: "flex", gap: 0.5 }}>
       {user.role === "admin" && (
-        <Link href="/admin" className="rounded px-3 py-1.5 hover:bg-white/10">
+        <Button component={NextLink} href="/admin" color="inherit" size="small">
           관리자
-        </Link>
+        </Button>
       )}
       <form action={signOut}>
-        <button className="rounded px-3 py-1.5 hover:bg-white/10">로그아웃</button>
+        <Button type="submit" color="inherit" size="small">
+          로그아웃
+        </Button>
       </form>
-    </div>
+    </Box>
   )
 }

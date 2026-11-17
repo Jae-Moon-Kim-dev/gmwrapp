@@ -1,6 +1,6 @@
 # 광명우리교회 홈페이지 (gmwrapp)
 
-Next.js 16 + Supabase + Tailwind CSS 4
+Next.js 16 + Supabase + MUI (Material UI) 9
 
 ## 시작하기
 

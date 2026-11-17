@@ -1,12 +1,20 @@
+import Box from "@mui/material/Box"
+import Container from "@mui/material/Container"
+import Typography from "@mui/material/Typography"
+
 export default function Footer() {
   return (
-    <footer className="mt-16 bg-brand-900 text-sm text-gray-300">
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <p className="font-bold text-white">광명우리교회</p>
+    <Box component="footer" sx={{ mt: 8, bgcolor: "primary.dark", color: "grey.400", py: 4 }}>
+      <Container maxWidth="lg">
+        <Typography sx={{ fontWeight: 700, color: "common.white" }}>광명우리교회</Typography>
         {/* TODO: 주소, 전화번호를 실제 정보로 바꾸세요 (site_settings 테이블로 옮겨도 좋아요) */}
-        <p className="mt-2">경기도 광명시 · 전화 000-0000-0000</p>
-        <p className="mt-4 text-xs text-gray-500">© 광명우리교회. All rights reserved.</p>
-      </div>
-    </footer>
+        <Typography variant="body2" sx={{ mt: 1 }}>
+          경기도 광명시 · 전화 000-0000-0000
+        </Typography>
+        <Typography variant="caption" sx={{ display: "block", mt: 2, color: "grey.600" }}>
+          © 광명우리교회. All rights reserved.
+        </Typography>
+      </Container>
+    </Box>
   )
 }

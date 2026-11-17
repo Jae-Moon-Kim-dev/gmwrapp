@@ -1,6 +1,11 @@
 import Image from "next/image"
-import Link from "next/link"
 import { Suspense } from "react"
+import AppBar from "@mui/material/AppBar"
+import Toolbar from "@mui/material/Toolbar"
+import Container from "@mui/material/Container"
+import Box from "@mui/material/Box"
+import Paper from "@mui/material/Paper"
+import NextLink from "@/components/ui/NextLink"
 import { getMenuTree } from "@/lib/menus"
 import AuthButtons from "./AuthButtons"
 import MobileNav from "./MobileNav"
@@ -11,44 +16,77 @@ export default async function Header() {
   const menus = await getMenuTree()
 
   return (
-    <header className="sticky top-0 z-40 bg-brand-700 text-white shadow">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="shrink-0">
-          <Image src="/images/logo-invert.png" alt="광명우리교회" width={110} height={50} priority />
-        </Link>
+    <AppBar position="sticky" elevation={1} sx={{ bgcolor: "primary.main" }}>
+      <Container maxWidth="lg">
+        <Toolbar disableGutters sx={{ height: 64, justifyContent: "space-between" }}>
+          <Box component={NextLink} href="/" sx={{ display: "flex", flexShrink: 0 }}>
+            <Image src="/images/logo-invert.png" alt="광명우리교회" width={110} height={50} priority />
+          </Box>
 
-        {/* PC 메뉴: 마우스를 올리면 하위 메뉴가 열림 */}
-        <nav className="hidden h-full md:block">
-          <ul className="flex h-full">
+          {/* PC 메뉴: 마우스를 올리면 하위 메뉴가 열림 (CSS만 사용) */}
+          <Box component="nav" sx={{ display: { xs: "none", md: "flex" }, height: "100%" }}>
             {menus.map((group) => (
-              <li key={group.id} className="group relative flex items-center">
-                <span className="cursor-default px-4 py-2 text-[15px] font-bold group-hover:text-accent">
+              <Box
+                key={group.id}
+                sx={{
+                  position: "relative",
+                  display: "flex",
+                  alignItems: "center",
+                  "&:hover .submenu": { visibility: "visible", opacity: 1 },
+                  "&:hover > span": { color: "secondary.main" },
+                }}
+              >
+                <Box component="span" sx={{ px: 2, py: 1, fontWeight: 700, cursor: "default" }}>
                   {group.name}
-                </span>
-                <ul className="invisible absolute top-full left-1/2 min-w-36 -translate-x-1/2 rounded-b-md bg-white py-2 text-gray-700 opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100">
+                </Box>
+                <Paper
+                  className="submenu"
+                  elevation={4}
+                  sx={{
+                    position: "absolute",
+                    top: "100%",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    minWidth: 150,
+                    py: 1,
+                    borderTopLeftRadius: 0,
+                    borderTopRightRadius: 0,
+                    visibility: "hidden",
+                    opacity: 0,
+                    transition: "opacity .15s",
+                  }}
+                >
                   {group.children.map((menu) => (
-                    <li key={menu.id}>
-                      <Link
-                        href={menu.url ?? "#"}
-                        className="block px-4 py-2 text-sm whitespace-nowrap hover:bg-brand-50 hover:text-brand-600"
-                      >
-                        {menu.name}
-                      </Link>
-                    </li>
+                    <Box
+                      key={menu.id}
+                      component={NextLink}
+                      href={menu.url ?? "#"}
+                      sx={{
+                        display: "block",
+                        px: 2,
+                        py: 1,
+                        fontSize: 14,
+                        whiteSpace: "nowrap",
+                        color: "text.primary",
+                        "&:hover": { bgcolor: "brand.soft", color: "primary.main" },
+                      }}
+                    >
+                      {menu.name}
+                    </Box>
                   ))}
-                </ul>
-              </li>
+                </Paper>
+              </Box>
             ))}
-          </ul>
-        </nav>
+          </Box>
 
-        <div className="flex items-center gap-2">
-          <Suspense fallback={<div className="h-8 w-20" />}>
-            <AuthButtons />
-          </Suspense>
-          <MobileNav menus={menus} />
-        </div>
-      </div>
-    </header>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Suspense fallback={<Box sx={{ width: 80 }} />}>
+              <AuthButtons />
+            </Suspense>
+            <MobileNav menus={menus} />
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   )
 }
