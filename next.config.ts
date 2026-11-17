@@ -1,15 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "export",
-  /* config options here */
-  trailingSlash: true,
   images: {
-      unoptimized: true
+    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.r2.dev',
+      },
+    ],
   },
   compiler: {
-    styledComponents: true
-  }
+    styledComponents: true,
+  },
 };
 
 export default nextConfig;
