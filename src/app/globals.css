@@ -1,42 +1,19 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tailwindcss";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* 교회 홈페이지 색상 - 여기만 바꾸면 전체 톤이 바뀝니다 */
+@theme {
+  --color-brand-50: #f2f6fb;
+  --color-brand-100: #dfe8f4;
+  --color-brand-500: #3a5f8f;
+  --color-brand-600: #2c4a72;
+  --color-brand-700: #223a5a;
+  --color-brand-900: #142338;
+  --color-accent: #c8963e;
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  --font-sans: var(--font-nanum), "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+  @apply bg-white text-gray-800 antialiased;
+  word-break: keep-all;
 }
