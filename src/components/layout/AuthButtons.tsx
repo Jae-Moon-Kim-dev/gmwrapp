@@ -2,7 +2,7 @@ import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
 import NextLink from "@/components/ui/NextLink"
 import { getCurrentUser } from "@/lib/auth"
-import { signOut } from "@/app/login/actions"
+import { signOut } from "@/app/(site)/login/actions"
 
 export default async function AuthButtons() {
   const user = await getCurrentUser()
